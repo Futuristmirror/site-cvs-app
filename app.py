@@ -24,7 +24,7 @@ with tab1:
         water_tank_size = st.selectbox("Water Tank Size (bbl)", options=[210, 300, 400, 500, 750, 1000], index=2)
 
     oil_scfh = oil_tank_qty * oil_tank_size if oil_tank_qty else 0
-      water_scfh = water_tank_size * 0.6 * water_tank_qty if water_tank_qty else 0
+    water_scfh = water_tank_size * 0.6 * water_tank_qty if water_tank_qty else 0
 
     st.markdown("#### SCFH @ SG=1")
     st.metric("Oil Tanks SCFH", f"{oil_scfh}")
@@ -36,9 +36,9 @@ with tab1:
     st.markdown("### Pressure Inputs")
         col3, col4 = st.columns(2)
     with col3:
-        thief_prv_input = st.number_input("Minimum Thief Hatch/PRV (osig)", min_value=0.0, value=8.0)
+    thief_prv_input = st.number_input("Minimum Thief Hatch/PRV (osig)", min_value=0.0, value=8.0)
     with col4:
-        leaking_safety = st.number_input("Leaking Safety Factor (osig)", min_value=0.0, value=13.0)
+    leaking_safety = st.number_input("Leaking Safety Factor (osig)", min_value=0.0, value=13.0)
 
     design_pressure = (leaking_safety - thief_prv_input) * 0.9
     st.metric("Design Pressure", f"{design_pressure:.2f} osig")
