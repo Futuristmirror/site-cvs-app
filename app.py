@@ -44,3 +44,49 @@ df = pd.DataFrame({
 })
 
 st.download_button("Download CSV", data=df.to_csv(index=False), file_name="site_output.csv", mime="text/csv")
+
+
+import math
+import streamlit as st
+
+st.set_page_config(page_title="Closed Vent System - Oil PPIVFR", layout="wide")
+st.title("Closed Vent System Analysis - Oil PPIVFR (Surge Adjusted)")
+
+# Editable Inputs
+st.markdown("#### Inputs")
+oil_production = st.number_input("Oil Production (bbl/day)", min_value=0.0, value=350.0)
+oil_pressure = st.number_input("Oil Pressure - Last Stage (psig)", min_value=0.0, value=5.0)
+surge_percent = st.number_input("Surge Percent (%)", min_value=0.0, value=30.0)
+promax_flash = st.text_input("PROMAX Flash (SCF/BBL) [optional]", value="")
+promax_mw = st.text_input("PROMAX Vapor MW [optional]", value="")
+
+# Defaults
+base_flash = 12.0
+default_mw = 28.97
+default_vapor_mw = 46.0
+
+# Flash + Working Volume Calculation
+try:
+    promax_flash_val = float(promax_flash)
+    promax_mw_val = float(promax_mw) if promax_mw else default_vapor_mw
+    flash_working = (base_flash + promax_flash_val) * math.sqrt(promax_mw_val / default_mw)
+    flash_source = "PROMAX"
+except:
+    flash_working = (base_flash + oil_pressure * 1.15 * 1.5) * math.sqrt(default_vapor_mw / default_mw)
+    flash_source = "Pressure-based"
+
+# Flowrate
+oil_flowrate = oil_production / 34.2
+
+# Surge-adjusted flow
+adjusted_bbl_per_day = ((oil_flowrate * surge_percent / 100) + oil_flowrate) * 34.2
+
+# Final PPIVFR calculation
+oil_ppivfr = flash_working * adjusted_bbl_per_day / 1_000_000
+
+# Display
+st.markdown("#### Results")
+st.write(f"**Flash + Working Volume (Oil)**: {flash_working:.2f} SCF/BBL ({flash_source})")
+st.write(f"**Oil Flowrate**: {oil_flowrate:.2f} GPM")
+st.write(f"**Adjusted BBL/day (with surge)**: {adjusted_bbl_per_day:.2f}")
+st.metric("Oil PPIVFR (mmscfd, SG=1)", f"{oil_ppivfr:.5f}")
