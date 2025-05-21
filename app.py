@@ -175,3 +175,4 @@ with tab3:
     st.metric("Total Additional PPIVFR", f"{total_additional_ppivfr:.5f} mmscfd")
 
     st.markdown("💡 You can add more rows or disable unused sources using the checkboxes.")
+
