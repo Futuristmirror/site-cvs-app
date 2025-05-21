@@ -143,32 +143,42 @@ with tab3:
             "Flowrate (gpm)": 210,
             "Type": "Oil",
             "Pressure (psig)": 0.0,
-            "Flash Only PROMAX (scf/bbl)": "",
-            "Vapor MW": "",
             "Flash+Work (scf/bbl)": 8,
             "MMSCFD (SG=1)": 0.0,
             "Drawing From Tank?": True,
-            "In Use?": True
+            "In Use?": True,
+            "Flash Only PROMAX (scf/bbl)": "",
+            "Vapor MW": ""
         },
         {
             "Description": "Recirc #1 to HT",
             "Flowrate (gpm)": 39,
             "Type": "Oil",
             "Pressure (psig)": 60.0,
-            "Flash Only PROMAX (scf/bbl)": "",
-            "Vapor MW": "",
             "Flash+Work (scf/bbl)": 121,
             "MMSCFD (SG=1)": 0.0,
             "Drawing From Tank?": True,
-            "In Use?": False
+            "In Use?": False,
+            "Flash Only PROMAX (scf/bbl)": "",
+            "Vapor MW": ""
         }
     ]
 
+    # Set up editable DataFrame
     df_input = pd.DataFrame(default_data)
+
+    # Reorder columns to match new layout
+    column_order = [
+        "Description", "Flowrate (gpm)", "Type", "Pressure (psig)",
+        "Flash+Work (scf/bbl)", "MMSCFD (SG=1)", "Drawing From Tank?", "In Use?",
+        "Flash Only PROMAX (scf/bbl)", "Vapor MW"
+    ]
+    df_input = df_input[column_order]
 
     edited_df = st.data_editor(
         df_input,
         num_rows="dynamic",
+        column_order=column_order,
         column_config={
             "Description": st.column_config.TextColumn(width="large"),
             "Type": st.column_config.SelectboxColumn("Type", options=["Oil", "Water"], default="Oil"),
@@ -176,6 +186,7 @@ with tab3:
         use_container_width=True
     )
 
+    # Calculation logic
     def calculate_flash_work(row):
         try:
             if row["Flowrate (gpm)"] == "" or not row["In Use?"]:
@@ -201,7 +212,7 @@ with tab3:
 
     def calculate_ppivfr(row):
         try:
-            if row["Flowrate (gpm)"] == "" or not row["In Use?"]:
+            if not row["In Use?"]:
                 return 0.0
             flowrate = float(row["Flowrate (gpm)"])
             flash_work = calculate_flash_work(row)
@@ -209,12 +220,12 @@ with tab3:
         except:
             return 0.0
 
-    # Apply calculations
     edited_df["MMSCFD (SG=1)"] = edited_df.apply(calculate_ppivfr, axis=1)
 
     # Output sum
     total_additional_ppivfr = edited_df["MMSCFD (SG=1)"].sum()
     st.metric("🧮 Total 'Add to Main Process' PPIVFR", f"{total_additional_ppivfr:.5f} mmscfd")
 
-    st.markdown("💡 You can override Flash+Work using PROMAX values. Only rows marked 'In Use' are included.")
+    st.markdown("✅ Only rows marked 'In Use' are included in the total.")
+
 
