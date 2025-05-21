@@ -14,14 +14,19 @@ tab1, tab2 = st.tabs(["🛢 Tank Layout", "🌊 Main Process"])
 with tab1:
     st.header("Tank Layout")
 
-    st.subheader("Oil & Water Tank Setup")
-    col1, col2 = st.columns(2)
-    with col1:
-        oil_tank_qty = st.number_input("Oil Tank Quantity", min_value=0, value=7)
-        oil_tank_size = st.selectbox("Oil Tank Size (bbl)", options=[210, 300, 400, 500, 750, 1000], index=3)
-    with col2:
-        water_tank_qty = st.number_input("Water Tank Quantity", min_value=0, value=4)
-        water_tank_size = st.selectbox("Water Tank Size (bbl)", options=[210, 300, 400, 500, 750, 1000], index=3)
+    # Tank Setup Inputs
+st.subheader("Oil & Water Tank Setup")
+col1, col2 = st.columns(2)
+with col1:
+    oil_tank_qty = st.number_input("Oil Tank Quantity", min_value=0, value=7)
+    oil_tank_size = st.selectbox("Oil Tank Size (bbl)", options=[210, 300, 400, 500, 750, 1000], index=3)
+    oil_tank_rating = st.number_input("Lowest Oil Tank Rating (oz)", min_value=0.0, value=16.0)
+
+with col2:
+    water_tank_qty = st.number_input("Water Tank Quantity", min_value=0, value=4)
+    water_tank_size = st.selectbox("Water Tank Size (bbl)", options=[210, 300, 400, 500, 750, 1000], index=3)
+    water_tank_rating = st.number_input("Lowest Water Tank Rating (oz)", min_value=0.0, value=16.0)
+
 
     oil_scfh = oil_tank_qty * oil_tank_size if oil_tank_qty else 0
     water_scfh = water_tank_size * 0.6 * water_tank_qty if water_tank_qty else 0
