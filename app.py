@@ -38,10 +38,13 @@ with tab1:
     with col3:
         thief_prv_input = st.number_input("Minimum Thief Hatch/PRV (osig)", min_value=0.0, value=8.0)
     with col4:
-        leaking_safety = st.number_input("Leaking Safety Factor (osig)", min_value=0.0, value=13.0)
-design_pressure = (thief_prv_input - leaking_safety) * 0.9
+        leaking_safety = st.number_input("Leaking Safety Factor (osig)", min_value=0.0, value=2.0)
+
+    design_pressure = (thief_prv_input - leaking_safety) * 0.9
     st.metric("Design Pressure", f"{design_pressure:.2f} osig")
 
+    if design_pressure < 0:
+        st.warning("⚠️ Leaking Safety Factor is greater than PRV — design pressure may be invalid.")
 
     st.markdown("### Notes")
     st.text_area("Assumptions / Observations", "~ tank pressure assumed based on operator input", height=80)
