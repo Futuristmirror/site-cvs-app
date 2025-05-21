@@ -49,7 +49,9 @@ st.download_button("Download CSV", data=df.to_csv(index=False), file_name="site_
 import math
 import streamlit as st
 
-st.set_page_config(page_title="Closed Vent System - Oil PPIVFR", layout="wide")
+st.markdown("---")
+st.header("Main Process – Oil PPIVFR (Surge Adjusted)")
+
 st.title("Closed Vent System Analysis - Oil PPIVFR (Surge Adjusted)")
 
 # Editable Inputs
