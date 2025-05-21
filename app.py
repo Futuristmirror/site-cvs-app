@@ -6,7 +6,8 @@ st.set_page_config(page_title="Closed Vent System Calculator", layout="wide")
 st.title("Closed Vent System Assessment Tool")
 
 # Setup Tabs
-tab1, tab2, tab3 = st.tabs(["🛢 Tank Layout", "🌊 Main Process", "➕ Add to Main Process"])
+tab1, tab2, tab3, tab4 = st.tabs(["🛢 Tank Layout", "🌊 Main Process", "➕ Add to Main Process", "🌬 MAIN TANK VENT"])
+
 
 # -----------------------------
 # Tab 1: Tank Layout
@@ -138,5 +139,67 @@ with tab3:
 
     st.info("🛠 Placeholder: Logic and live calculations for this section will be implemented later.")
 
-   
+   # -----------------------------
+# Tab 4: MAIN TANK VENT
+# -----------------------------
+with tab4:
+    st.header("🌬 MAIN TANK VENT HEADER1 (3\" Only)")
+
+    st.markdown("This prototype models the 3\" header row using the original Excel formulas. Blue = calculated values, Green = input.")
+
+    st.subheader("Pipe Characteristics")
+
+    # User input for developed length (G6)
+    developed_length = st.number_input("Developed Length (ft)", min_value=0.0, value=0.0, step=1.0)
+
+    # Constants (G7 to G11)
+    ID_in = 3.068  # G7
+    eD = 12 * 0.00015 / ID_in  # G8
+    turb_factor = 0.25 / (math.log10(eD / 3.7) ** 2)  # G9
+    spitz_factor = (1 + 3.6 / ID_in + 0.03 * ID_in) / 100  # G10
+    ratio = turb_factor / spitz_factor  # G11
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.metric("ID (inches)", f"{ID_in:.3f}")
+        st.metric("ε/D", f"{eD:.5f}")
+        st.metric("Turb Friction Factor fr", f"{turb_factor:.4f}")
+    with col2:
+        st.metric("Spitzglass ƒspzz", f"{spitz_factor:.5f}")
+        st.metric("Ratio (fr / ƒspzz)", f"{ratio:.4f}")
+
+    st.subheader("Pipe Fittings – 3\"")
+
+    # Inputs: Quantities for fittings (G13–G16)
+    tee_run = st.number_input("Tee, Flow thru run (qty)", min_value=0, value=0, step=1)
+    tee_branch = st.number_input("Tee, Flow thru branch (qty)", min_value=0, value=0, step=1)
+    elbow_90 = st.number_input("Elbow, 90° Threaded (qty)", min_value=0, value=0, step=1)
+    elbow_45 = st.number_input("Elbow, 45° Threaded (qty)", min_value=0, value=0, step=1)
+
+    # Calculated Le values (H13–H16)
+    def calc_le(qty, multiplier):
+        return qty * (1 / 12) * ID_in * multiplier
+
+    le_tee_run = calc_le(tee_run, 20)
+    le_tee_branch = calc_le(tee_branch, 60)
+    le_elbow_90 = calc_le(elbow_90, 30)
+    le_elbow_45 = calc_le(elbow_45, 16)
+
+    st.markdown("#### Equivalent Lengths (Le, ft)")
+
+    le_col1, le_col2 = st.columns(2)
+    with le_col1:
+        st.metric("Le - Tee, Run", f"{le_tee_run:.2f}")
+        st.metric("Le - Tee, Branch", f"{le_tee_branch:.2f}")
+    with le_col2:
+        st.metric("Le - Elbow 90°", f"{le_elbow_90:.2f}")
+        st.metric("Le - Elbow 45°", f"{le_elbow_45:.2f}")
+
+    st.subheader("Summary")
+
+    total_le = le_tee_run + le_tee_branch + le_elbow_90 + le_elbow_45
+    total_pipe = developed_length + total_le
+
+    st.metric("Total Equivalent Fittings Le (ft)", f"{total_le:.2f}")
+    st.metric("Total Length of 3\" Header (ft)", f"{total_pipe:.2f}")
 
