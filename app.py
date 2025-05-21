@@ -92,3 +92,48 @@ st.write(f"**Flash + Working Volume (Oil)**: {flash_working:.2f} SCF/BBL ({flash
 st.write(f"**Oil Flowrate**: {oil_flowrate:.2f} GPM")
 st.write(f"**Adjusted BBL/day (with surge)**: {adjusted_bbl_per_day:.2f}")
 st.metric("Oil PPIVFR (mmscfd, SG=1)", f"{oil_ppivfr:.5f}")
+
+st.markdown("---")
+st.header("Main Process – Water PPIVFR (Surge Adjusted)")
+
+# Editable Inputs
+st.markdown("#### Inputs")
+water_production = st.number_input("Water Production (bbl/day)", min_value=0.0, value=700.0)
+water_pressure = st.number_input("Water Pressure - First Stage (psig)", min_value=0.0, value=120.0)
+water_surge_percent = st.number_input("Surge Percent (Water) (%)", min_value=0.0, value=30.0)
+promax_water_flash = st.text_input("PROMAX Flash for Water (SCF/BBL) [optional]", value="")
+promax_water_mw = st.text_input("PROMAX Vapor MW for Water [optional]", value="")
+
+# Defaults
+water_base_flash = 6.0
+carryover_flash = 4.0
+default_mw = 28.97
+default_water_mw = 46.0
+
+# Flash + Working Volume Calculation for Water
+try:
+    promax_water_flash_val = float(promax_water_flash)
+    promax_water_mw_val = float(promax_water_mw) if promax_water_mw else default_water_mw
+    flash_working_water = (water_base_flash + promax_water_flash_val) * math.sqrt(promax_water_mw_val / default_mw)
+    flash_source_water = "PROMAX"
+except:
+    flash_working_water = (water_base_flash + carryover_flash) * math.sqrt(default_water_mw / default_mw)
+    flash_source_water = "Calculated"
+
+# Water flowrate
+water_flowrate = water_production / 34.2
+
+# Surge-adjusted flow
+adjusted_bbl_per_day_water = ((water_flowrate * water_surge_percent / 100) + water_flowrate) * 34.2
+
+# Final PPIVFR calculation for water
+water_ppivfr = flash_working_water * adjusted_bbl_per_day_water / 1_000_000
+
+# Display
+st.markdown("#### Results")
+st.write(f"**Flash + Working Volume (Water)**: {flash_working_water:.2f} SCF/BBL ({flash_source_water})")
+st.write(f"**Water Flowrate**: {water_flowrate:.2f} GPM")
+st.write(f"**Adjusted BBL/day (with surge)**: {adjusted_bbl_per_day_water:.2f}")
+st.metric("Water PPIVFR (mmscfd, SG=1)", f"{water_ppivfr:.5f}")
+
+
