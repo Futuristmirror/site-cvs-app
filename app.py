@@ -131,6 +131,12 @@ with tab2:
 # -----------------------------
 # Tab 3: Add to Main Process
 # -----------------------------
-    with tab3:
+with tab3:
+    st.header("➕ Add to Main Process")
+
+    st.markdown("This section will allow you to define additional process sources that contribute to total PPIVFR (e.g., LACT, Recirc, Vapor Return).")
+
+    st.info("🛠 Placeholder: Logic and live calculations for this section will be implemented later.")
+
    
 
