@@ -240,6 +240,6 @@ with tab3:
     total_additional_ppivfr = edited_df["MMSCFD (SG=1)"].sum()
     st.metric("🧮 Total 'Add to Main Process' PPIVFR", f"{total_additional_ppivfr:.5f} mmscfd")
 
-    st.markdown("✅ Only rows marked 'In Use' are included. Flash logic dynamically adjusts based on tank draw and PROMAX overrides.")
+    st.markdown("✅ THIS IS FUCKING BROKEN")
 
 
