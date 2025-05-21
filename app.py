@@ -161,8 +161,9 @@ with tab3:
         }
     ]
 
-    # Create and reorder
     df_input = pd.DataFrame(default_data)
+
+    # Reorder columns to match layout
     column_order = [
         "Description", "Flowrate (gpm)", "Type", "Pressure (psig)",
         "Flash+Work (scf/bbl)", "Drawing From Tank?", "In Use?",
@@ -181,7 +182,6 @@ with tab3:
         use_container_width=True
     )
 
-    # Flash + Work calc logic
     def calculate_flash_work(row):
         try:
             if row["Flowrate (gpm)"] == "" or not row["In Use?"]:
@@ -192,9 +192,12 @@ with tab3:
             promax_flash = float(row["Flash Only PROMAX (scf/bbl)"]) if row["Flash Only PROMAX (scf/bbl)"] != "" else None
             vapor_mw = float(row["Vapor MW"]) if row["Vapor MW"] != "" else 46.0
 
+            # Check box logic
+            add_back_flash = 0 if row["Drawing From Tank?"] else 6
+
             if ftype == "water":
                 if promax_flash is None:
-                    return (6 + 4) * math.sqrt(46 / 28.97)
+                    return (6 + add_back_flash) * math.sqrt(46 / 28.97)
                 else:
                     return (6 + promax_flash) * math.sqrt(vapor_mw / 28.97)
             else:
@@ -205,7 +208,6 @@ with tab3:
         except:
             return row["Flash+Work (scf/bbl)"]
 
-    # MMSCFD calc logic
     def calculate_ppivfr(row):
         try:
             if not row["In Use?"]:
@@ -216,17 +218,14 @@ with tab3:
         except:
             return 0.0
 
-    # Apply MMSCFD and display separately
+    # Calculate and format
     edited_df["MMSCFD (SG=1)"] = edited_df.apply(calculate_ppivfr, axis=1)
 
-    # Display table with calculated column
-    st.markdown("### Calculated MMSCFD Table")
+    # Display only one updated table
+    st.markdown("### Additional Source Table (with Calculated MMSCFD)")
     st.dataframe(edited_df.style.format({"MMSCFD (SG=1)": "{:.4f}"}), use_container_width=True)
 
-    # Total
     total_additional_ppivfr = edited_df["MMSCFD (SG=1)"].sum()
     st.metric("🧮 Total 'Add to Main Process' PPIVFR", f"{total_additional_ppivfr:.5f} mmscfd")
 
-    st.markdown("✅ Only rows marked 'In Use' are included. You can override Flash using PROMAX inputs.")
-
-
+    st.markdown("✅ Only rows marked 'In Use' are included. Flash logic now respects tank draw checkboxes.")
