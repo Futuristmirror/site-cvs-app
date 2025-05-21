@@ -136,21 +136,36 @@ with tab3:
 
     st.markdown("Each row represents an additional vent source (e.g., LACT, Recirc, Loadout). Checked rows will be included.")
 
-    # Define columns and default data
+    # Default data
     default_data = [
-        {"Description": "LACT #1 to tanks", "Flowrate (gpm)": 210, "Type": "Oil", "Pressure (psig)": 0.0,
-         "Flash+Work (scf/bbl)": 8, "MMSCFD (SG=1)": 0.054, "Drawing From Tank?": True, "In Use?": True},
-        {"Description": "Recirc #1 to HT", "Flowrate (gpm)": 39, "Type": "Oil", "Pressure (psig)": 60.0,
-         "Flash+Work (scf/bbl)": 121, "MMSCFD (SG=1)": 0.000, "Drawing From Tank?": True, "In Use?": False},
-        {"Description": "Recirc #2 to HT", "Flowrate (gpm)": 25, "Type": "Oil", "Pressure (psig)": 60.0,
-         "Flash+Work (scf/bbl)": 121, "MMSCFD (SG=1)": 0.000, "Drawing From Tank?": True, "In Use?": True},
-        {"Description": "Truck Loadout Vapor Return", "Flowrate (gpm)": 378, "Type": "Oil", "Pressure (psig)": 0.0,
-         "Flash+Work (scf/bbl)": 8, "MMSCFD (SG=1)": 0.000, "Drawing From Tank?": True, "In Use?": True}
+        {
+            "Description": "LACT #1 to tanks",
+            "Flowrate (gpm)": 210,
+            "Type": "Oil",
+            "Pressure (psig)": 0.0,
+            "Flash Only PROMAX (scf/bbl)": "",
+            "Vapor MW": "",
+            "Flash+Work (scf/bbl)": 8,
+            "MMSCFD (SG=1)": 0.0,
+            "Drawing From Tank?": True,
+            "In Use?": True
+        },
+        {
+            "Description": "Recirc #1 to HT",
+            "Flowrate (gpm)": 39,
+            "Type": "Oil",
+            "Pressure (psig)": 60.0,
+            "Flash Only PROMAX (scf/bbl)": "",
+            "Vapor MW": "",
+            "Flash+Work (scf/bbl)": 121,
+            "MMSCFD (SG=1)": 0.0,
+            "Drawing From Tank?": True,
+            "In Use?": False
+        }
     ]
 
     df_input = pd.DataFrame(default_data)
 
-    # Let user edit all but calculated MMSCFD
     edited_df = st.data_editor(
         df_input,
         num_rows="dynamic",
@@ -161,18 +176,45 @@ with tab3:
         use_container_width=True
     )
 
-    # Calculate MMSCFD per row and insert into dataframe
-    def calculate_ppivfr(row):
-        if not row["In Use?"]:
-            return 0.0
-        flowrate = row["Flowrate (gpm)"]
-        flash_work = row["Flash+Work (scf/bbl)"]
-        return flash_work * (flowrate * 34.2) / 1_000_000
+    def calculate_flash_work(row):
+        try:
+            if row["Flowrate (gpm)"] == "" or not row["In Use?"]:
+                return 0.0
 
+            ftype = str(row["Type"]).strip().lower()
+            pressure = float(row["Pressure (psig)"])
+            promax_flash = float(row["Flash Only PROMAX (scf/bbl)"]) if row["Flash Only PROMAX (scf/bbl)"] != "" else None
+            vapor_mw = float(row["Vapor MW"]) if row["Vapor MW"] != "" else 46.0
+
+            if ftype == "water":
+                if promax_flash is None:
+                    return (6 + 4) * math.sqrt(46 / 28.97)
+                else:
+                    return (6 + promax_flash) * math.sqrt(vapor_mw / 28.97)
+            else:
+                if promax_flash is None:
+                    return (12 + pressure * 1.15 * 1.5) * math.sqrt(46 / 28.97)
+                else:
+                    return (12 + promax_flash) * math.sqrt(vapor_mw / 28.97)
+        except:
+            return row["Flash+Work (scf/bbl)"]
+
+    def calculate_ppivfr(row):
+        try:
+            if row["Flowrate (gpm)"] == "" or not row["In Use?"]:
+                return 0.0
+            flowrate = float(row["Flowrate (gpm)"])
+            flash_work = calculate_flash_work(row)
+            return flash_work * (flowrate * 34.2) / 1_000_000
+        except:
+            return 0.0
+
+    # Apply calculations
     edited_df["MMSCFD (SG=1)"] = edited_df.apply(calculate_ppivfr, axis=1)
 
+    # Output sum
     total_additional_ppivfr = edited_df["MMSCFD (SG=1)"].sum()
-    st.metric("Total Additional PPIVFR", f"{total_additional_ppivfr:.5f} mmscfd")
+    st.metric("🧮 Total 'Add to Main Process' PPIVFR", f"{total_additional_ppivfr:.5f} mmscfd")
 
-    st.markdown("💡 You can add more rows or disable unused sources using the checkboxes.")
+    st.markdown("💡 You can override Flash+Work using PROMAX values. Only rows marked 'In Use' are included.")
 
