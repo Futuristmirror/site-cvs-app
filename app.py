@@ -134,7 +134,7 @@ with tab2:
 with tab3:
     st.header("➕ Add to Main Process")
 
-    st.markdown("Each row represents an additional vent source. 'Flash+Work' and 'MMSCFD' are calculated in real time based on inputs.")
+    st.markdown("Each row represents an additional vent source. Flash and MMSCFD are calculated in real time.")
 
     default_data = [
         {
@@ -161,17 +161,17 @@ with tab3:
 
     df_input = pd.DataFrame(default_data)
 
-    # Add empty calc columns to structure
+    # Add calculation columns (they'll be overwritten)
     df_input["Flash+Work (scf/bbl)"] = 0.0
     df_input["MMSCFD (SG=1)"] = 0.0
 
     column_order = [
         "Description", "Flowrate (gpm)", "Type", "Pressure (psig)",
-        "Drawing From Tank?", "In Use?", "Flash Only PROMAX (scf/bbl)", "Vapor MW",
+        "Drawing From Tank?", "In Use?",
+        "Flash Only PROMAX (scf/bbl)", "Vapor MW",
         "Flash+Work (scf/bbl)", "MMSCFD (SG=1)"
     ]
 
-    # Editable table (calc columns will be overwritten)
     edited_df = st.data_editor(
         df_input[column_order],
         num_rows="dynamic",
@@ -183,26 +183,24 @@ with tab3:
         use_container_width=True
     )
 
-    # Recalculate Flash+Work and MMSCFD
     def calc_flash_work(row):
         try:
             ftype = str(row["Type"]).strip().lower()
             pressure = float(row["Pressure (psig)"])
             promax_flash = float(row["Flash Only PROMAX (scf/bbl)"]) if row["Flash Only PROMAX (scf/bbl)"] != "" else None
             vapor_mw = float(row["Vapor MW"]) if row["Vapor MW"] != "" else 46.0
-            tank_draw = row["Drawing From Tank?"]
+            af = 0 if row["Drawing From Tank?"] else 6
 
             if ftype == "water":
-                base = 0 if tank_draw else 6
                 if promax_flash is None:
-                    return (6 + base) * math.sqrt(46 / 28.97)
+                    return (af + 4) * math.sqrt(46 / 28.97)
                 else:
-                    return (6 + promax_flash) * math.sqrt(vapor_mw / 28.97)
-            else:
+                    return (af + promax_flash) * math.sqrt(vapor_mw / 28.97)
+            else:  # oil
                 if promax_flash is None:
-                    return (12 + pressure * 1.15 * 1.5) * math.sqrt(46 / 28.97)
+                    return (af + 1.5 * pressure) * math.sqrt(46 / 28.97)
                 else:
-                    return (12 + promax_flash) * math.sqrt(vapor_mw / 28.97)
+                    return (af + promax_flash) * math.sqrt(vapor_mw / 28.97)
         except:
             return 0.0
 
@@ -227,12 +225,21 @@ with tab3:
     edited_df["Flash+Work (scf/bbl)"] = flash_vals
     edited_df["MMSCFD (SG=1)"] = mmscfd_vals
 
-    # Display final full table
-    st.dataframe(edited_df.style.format({"MMSCFD (SG=1)": "{:.5f}", "Flash+Work (scf/bbl)": "{:.2f}"}), use_container_width=True)
+    # Display final updated table (in editor)
+    st.data_editor(
+        edited_df,
+        num_rows="dynamic",
+        column_order=column_order,
+        column_config={
+            "Description": st.column_config.TextColumn(width="large"),
+            "Type": st.column_config.SelectboxColumn("Type", options=["Oil", "Water"], default="Oil"),
+        },
+        use_container_width=True
+    )
 
-    # Total
     total_additional_ppivfr = edited_df["MMSCFD (SG=1)"].sum()
     st.metric("🧮 Total 'Add to Main Process' PPIVFR", f"{total_additional_ppivfr:.5f} mmscfd")
 
-    st.markdown("✅ Flash and MMSCFD are real-time. PROMAX overrides and tank draw flags are respected.")
+    st.markdown("✅ Only rows marked 'In Use' are included. Flash logic dynamically adjusts based on tank draw and PROMAX overrides.")
+
 
