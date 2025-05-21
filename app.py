@@ -128,5 +128,37 @@ with tab2:
         st.write(f"**Water Flowrate**: {water_flowrate:.2f} GPM")
         st.write(f"**Adjusted BBL/day (with surge)**: {adjusted_bbl_per_day_water:.2f}")
         st.metric("Water PPIVFR (mmscfd, SG=1)", f"{water_ppivfr:.5f}")
+# -----------------------------
+# Tab 3: Add to Main Process
+# -----------------------------
+with tab3:
+    st.header("➕ Add to Main Process")
 
+    st.markdown("Each row represents an additional vent source (e.g., LACT, Recirc, Loadout). Checked rows will be included.")
+
+    # Create a dynamic editable table with default rows
+    st.markdown("### Additional Source Table")
+
+    default_data = [
+        {"Description": "LACT #1 to tanks", "Flowrate (gpm)": 210, "Type": "Oil", "Pressure (psig)": 0.0, "Flash+Work (scf/bbl)": 8, "Drawing From Tank?": True, "In Use?": True},
+        {"Description": "Recirc #1 to HT", "Flowrate (gpm)": 39, "Type": "Oil", "Pressure (psig)": 60.0, "Flash+Work (scf/bbl)": 121, "Drawing From Tank?": True, "In Use?": False},
+        {"Description": "Recirc #2 to HT", "Flowrate (gpm)": 25, "Type": "Oil", "Pressure (psig)": 60.0, "Flash+Work (scf/bbl)": 121, "Drawing From Tank?": True, "In Use?": True},
+        {"Description": "Truck Loadout Vapor Return", "Flowrate (gpm)": 378, "Type": "Oil", "Pressure (psig)": 0.0, "Flash+Work (scf/bbl)": 8, "Drawing From Tank?": True, "In Use?": True}
+    ]
+
+    df_input = pd.DataFrame(default_data)
+    edited_df = st.data_editor(df_input, num_rows="dynamic", use_container_width=True)
+
+    # Calculate MMSCFD per row and sum
+    def calculate_ppivfr(row):
+        flowrate = row["Flowrate (gpm)"]
+        flash_work = row["Flash+Work (scf/bbl)"]
+        return flash_work * (flowrate * 34.2) / 1_000_000
+
+    edited_df["MMSCFD (SG=1)"] = edited_df.apply(lambda row: calculate_ppivfr(row) if row["In Use?"] else 0, axis=1)
+
+    total_additional_ppivfr = edited_df["MMSCFD (SG=1)"].sum()
+    st.metric("Total Additional PPIVFR", f"{total_additional_ppivfr:.5f} mmscfd")
+
+    st.markdown("You can add more rows or disable unused sources.")
 
