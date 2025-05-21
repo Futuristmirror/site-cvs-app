@@ -46,7 +46,7 @@ else:
     design_pressure = 0.0
     st.warning("Leaking Safety Factor must be greater than PRV for a valid design pressure.")
 
-st.metric("Design Pressure", f"{design_pressure:.2f} osig")
+    st.metric("Design Pressure", f"{design_pressure:.2f} osig")
 
 
     st.markdown("### Notes")
