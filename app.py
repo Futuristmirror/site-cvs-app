@@ -136,29 +136,42 @@ with tab3:
 
     st.markdown("Each row represents an additional vent source (e.g., LACT, Recirc, Loadout). Checked rows will be included.")
 
-    # Create a dynamic editable table with default rows
-    st.markdown("### Additional Source Table")
-
+    # Define columns and default data
     default_data = [
-        {"Description": "LACT #1 to tanks", "Flowrate (gpm)": 210, "Type": "Oil", "Pressure (psig)": 0.0, "Flash+Work (scf/bbl)": 8, "Drawing From Tank?": True, "In Use?": True},
-        {"Description": "Recirc #1 to HT", "Flowrate (gpm)": 39, "Type": "Oil", "Pressure (psig)": 60.0, "Flash+Work (scf/bbl)": 121, "Drawing From Tank?": True, "In Use?": False},
-        {"Description": "Recirc #2 to HT", "Flowrate (gpm)": 25, "Type": "Oil", "Pressure (psig)": 60.0, "Flash+Work (scf/bbl)": 121, "Drawing From Tank?": True, "In Use?": True},
-        {"Description": "Truck Loadout Vapor Return", "Flowrate (gpm)": 378, "Type": "Oil", "Pressure (psig)": 0.0, "Flash+Work (scf/bbl)": 8, "Drawing From Tank?": True, "In Use?": True}
+        {"Description": "LACT #1 to tanks", "Flowrate (gpm)": 210, "Type": "Oil", "Pressure (psig)": 0.0,
+         "Flash+Work (scf/bbl)": 8, "MMSCFD (SG=1)": 0.054, "Drawing From Tank?": True, "In Use?": True},
+        {"Description": "Recirc #1 to HT", "Flowrate (gpm)": 39, "Type": "Oil", "Pressure (psig)": 60.0,
+         "Flash+Work (scf/bbl)": 121, "MMSCFD (SG=1)": 0.000, "Drawing From Tank?": True, "In Use?": False},
+        {"Description": "Recirc #2 to HT", "Flowrate (gpm)": 25, "Type": "Oil", "Pressure (psig)": 60.0,
+         "Flash+Work (scf/bbl)": 121, "MMSCFD (SG=1)": 0.000, "Drawing From Tank?": True, "In Use?": True},
+        {"Description": "Truck Loadout Vapor Return", "Flowrate (gpm)": 378, "Type": "Oil", "Pressure (psig)": 0.0,
+         "Flash+Work (scf/bbl)": 8, "MMSCFD (SG=1)": 0.000, "Drawing From Tank?": True, "In Use?": True}
     ]
 
     df_input = pd.DataFrame(default_data)
-    edited_df = st.data_editor(df_input, num_rows="dynamic", use_container_width=True)
 
-    # Calculate MMSCFD per row and sum
+    # Let user edit all but calculated MMSCFD
+    edited_df = st.data_editor(
+        df_input,
+        num_rows="dynamic",
+        column_config={
+            "Description": st.column_config.TextColumn(width="large"),
+            "Type": st.column_config.SelectboxColumn("Type", options=["Oil", "Water"], default="Oil"),
+        },
+        use_container_width=True
+    )
+
+    # Calculate MMSCFD per row and insert into dataframe
     def calculate_ppivfr(row):
+        if not row["In Use?"]:
+            return 0.0
         flowrate = row["Flowrate (gpm)"]
         flash_work = row["Flash+Work (scf/bbl)"]
         return flash_work * (flowrate * 34.2) / 1_000_000
 
-    edited_df["MMSCFD (SG=1)"] = edited_df.apply(lambda row: calculate_ppivfr(row) if row["In Use?"] else 0, axis=1)
+    edited_df["MMSCFD (SG=1)"] = edited_df.apply(calculate_ppivfr, axis=1)
 
     total_additional_ppivfr = edited_df["MMSCFD (SG=1)"].sum()
     st.metric("Total Additional PPIVFR", f"{total_additional_ppivfr:.5f} mmscfd")
 
-    st.markdown("You can add more rows or disable unused sources.")
-
+    st.markdown("💡 You can add more rows or disable unused sources using the checkboxes.")
