@@ -40,8 +40,14 @@ with tab1:
     with col4:
         leaking_safety = st.number_input("Leaking Safety Factor (osig)", min_value=0.0, value=13.0)
 
+   if leaking_safety > thief_prv_input:
     design_pressure = (leaking_safety - thief_prv_input) * 0.9
-    st.metric("Design Pressure", f"{design_pressure:.2f} osig")
+else:
+    design_pressure = 0.0
+    st.warning("Leaking Safety Factor must be greater than PRV for a valid design pressure.")
+
+st.metric("Design Pressure", f"{design_pressure:.2f} osig")
+
 
     st.markdown("### Notes")
     st.text_area("Assumptions / Observations", "~ tank pressure assumed based on operator input", height=80)
