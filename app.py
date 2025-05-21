@@ -40,7 +40,7 @@ with tab1:
     with col4:
         leaking_safety = st.number_input("Leaking Safety Factor (osig)", min_value=0.0, value=13.0)
 
-   if leaking_safety > thief_prv_input:
+if leaking_safety > thief_prv_input:
     design_pressure = (leaking_safety - thief_prv_input) * 0.9
 else:
     design_pressure = 0.0
