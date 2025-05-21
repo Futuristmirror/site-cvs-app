@@ -14,38 +14,41 @@ tab1, tab2 = st.tabs(["🛢 Tank Layout", "🌊 Main Process"])
 with tab1:
     st.header("Tank Layout")
 
+    st.subheader("Oil & Water Tank Setup")
     col1, col2 = st.columns(2)
     with col1:
-        oil_tank_qty = st.number_input("Oil Tank Quantity", min_value=0, value=4)
+        oil_tank_qty = st.number_input("Oil Tank Quantity", min_value=0, value=7)
         oil_tank_size = st.selectbox("Oil Tank Size (bbl)", options=[210, 300, 400, 500, 750, 1000], index=3)
-        oil_design_pressure = st.number_input("Oil Tank Design Pressure (osig)", min_value=0.0, value=16.0)
-
     with col2:
-        water_tank_qty = st.number_input("Water Tank Quantity", min_value=0, value=2)
+        water_tank_qty = st.number_input("Water Tank Quantity", min_value=0, value=4)
         water_tank_size = st.selectbox("Water Tank Size (bbl)", options=[210, 300, 400, 500, 750, 1000], index=2)
-        water_design_pressure = st.number_input("Water Tank Design Pressure (osig)", min_value=0.0, value=16.0)
 
-    assumption_note = st.text_input("Any Assumptions?", value="~ tank pressure assumed based on operator input")
+    oil_scfh = oil_tank_qty * oil_tank_size if oil_tank_qty else 0
+    water_scfh = water_tank_qty * water_tank_size * 0.6 if water_tank_qty else 0
 
-    # Calculations
-    total_volume = (oil_tank_qty * oil_tank_size) + (water_tank_qty * water_tank_size)
-    vapor_space = total_volume * 0.25
+    st.markdown("#### SCFH @ SG=1")
+    st.metric("Oil Tanks SCFH", f"{oil_scfh}")
+    st.metric("Water Tanks SCFH", f"{water_scfh}")
 
-    st.metric(label="Total Tank Volume (bbl)", value=f"{total_volume}")
-    st.metric(label="Estimated Vapor Space (25%)", value=f"{vapor_space:.1f} bbl")
+    total_thermal_ppivfr = (oil_scfh + water_scfh) * 24 / 1_000_000
+    st.metric("Total Thermal PPIVFR", f"{total_thermal_ppivfr:.5f} mmscfd")
 
-    # Export
-    df = pd.DataFrame({
-        "Oil Tanks": [oil_tank_qty],
-        "Oil Size": [oil_tank_size],
-        "Water Tanks": [water_tank_qty],
-        "Water Size": [water_tank_size],
-        "Total Volume": [total_volume],
-        "Vapor Space": [vapor_space],
-        "Assumption": [assumption_note]
-    })
+    st.markdown("### Pressure Inputs")
+    col3, col4 = st.columns(2)
+    with col3:
+        thief_prv_input = st.number_input("Minimum Thief Hatch/PRV", min_value=0.0, value=8.0, help="Units: osig")
+    with col4:
+        input_2_osig = st.number_input("Input 2 (osig)", min_value=0.0, value=13.0)
 
-    st.download_button("Download CSV", data=df.to_csv(index=False), file_name="site_output.csv", mime="text/csv")
+    try:
+        design_pressure = (input_2_osig - thief_prv_input) * 0.9
+        st.metric("Design Pressure", f"{design_pressure:.2f} osig")
+    except:
+        st.warning("Design Pressure could not be calculated.")
+
+    st.markdown("### Notes")
+    st.text_area("Assumptions / Observations", "~ tank pressure assumed based on operator input", height=80)
+
 
 
 # -----------------------------
