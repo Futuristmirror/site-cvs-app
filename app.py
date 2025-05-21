@@ -14,28 +14,29 @@ tab1, tab2 = st.tabs(["🛢 Tank Layout", "🌊 Main Process"])
 with tab1:
     st.header("Tank Layout")
 
-    # Tank Setup Inputs
-st.subheader("Oil & Water Tank Setup")
-col1, col2 = st.columns(2)
-with col1:
-    oil_tank_qty = st.number_input("Oil Tank Quantity", min_value=0, value=7)
-    oil_tank_size = st.selectbox("Oil Tank Size (bbl)", options=[210, 300, 400, 500, 750, 1000], index=3)
-    oil_tank_rating = st.number_input("Lowest Oil Tank Rating (oz)", min_value=0.0, value=16.0)
+    st.subheader("Oil & Water Tank Setup")
+    col1, col2 = st.columns(2)
+    with col1:
+        oil_tank_qty = st.number_input("Oil Tank Quantity", min_value=0, value=7)
+        oil_tank_size = st.selectbox("Oil Tank Size (bbl)", options=[210, 300, 400, 500, 750, 1000], index=3)
+        oil_tank_rating = st.number_input("Lowest Oil Tank Rating (oz)", min_value=0.0, value=16.0)
 
-with col2:
-    water_tank_qty = st.number_input("Water Tank Quantity", min_value=0, value=4)
-    water_tank_size = st.selectbox("Water Tank Size (bbl)", options=[210, 300, 400, 500, 750, 1000], index=3)
-    water_tank_rating = st.number_input("Lowest Water Tank Rating (oz)", min_value=0.0, value=16.0)
+        oil_scfh = oil_tank_qty * oil_tank_size if oil_tank_qty else 0
+        st.markdown("#### Oil SCFH")
+        st.metric("Oil Tanks SCFH", f"{oil_scfh}")
 
+    with col2:
+        water_tank_qty = st.number_input("Water Tank Quantity", min_value=0, value=4)
+        water_tank_size = st.selectbox("Water Tank Size (bbl)", options=[210, 300, 400, 500, 750, 1000], index=3)
+        water_tank_rating = st.number_input("Lowest Water Tank Rating (oz)", min_value=0.0, value=16.0)
 
-    oil_scfh = oil_tank_qty * oil_tank_size if oil_tank_qty else 0
-    water_scfh = water_tank_size * 0.6 * water_tank_qty if water_tank_qty else 0
+        water_scfh = water_tank_size * 0.6 * water_tank_qty if water_tank_qty else 0
+        st.markdown("#### Water SCFH")
+        st.metric("Water Tanks SCFH", f"{water_scfh}")
 
-    st.markdown("#### SCFH @ SG=1")
-    st.metric("Oil Tanks SCFH", f"{oil_scfh}")
-    st.metric("Water Tanks SCFH", f"{water_scfh}")
-
+    # Total PPIVFR row below both
     total_thermal_ppivfr = (oil_scfh + water_scfh) * 24 / 1_000_000
+    st.markdown("#### Total Thermal PPIVFR")
     st.metric("Total Thermal PPIVFR", f"{total_thermal_ppivfr:.5f} mmscfd")
 
     st.markdown("### Pressure Inputs")
@@ -53,6 +54,7 @@ with col2:
 
     st.markdown("### Notes")
     st.text_area("Assumptions / Observations", "~ tank pressure assumed based on operator input", height=80)
+
 
 # -----------------------------
 # Tab 2: Main Process
