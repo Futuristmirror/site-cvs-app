@@ -137,7 +137,7 @@ with tab3:
 
     st.markdown("This section will allow you to define additional process sources that contribute to total PPIVFR (e.g., LACT, Recirc, Vapor Return).")
 
-    st.info("🛠 Placeholder: Logic and live calculations for this section will be implemented later.")
+    st.info("🛠 GOT PISSED AND STOPPED HERE")
 
    # -----------------------------
 # Tab 4: MAIN TANK VENT
