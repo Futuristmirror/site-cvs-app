@@ -666,24 +666,29 @@ with tab9:
 
     diagram = """
     flowchart TB
-        %% Vapor first (top level)
-        A -.-> V1[Vapor from Inlet Seps]:::vapor
-        B -.-> V2[Vapor from HT]:::vapor
-        C -.-> V3[Vapor from VRTs]:::vapor
-        D -.-> V4[Vapor from Oil Tanks]:::vapor
 
-        %% Oil path (middle)
-        A[Inlet Separators] --> B[Heater Treaters] --> C[VRTs] --> D[Oil Tanks]
+        %% Vapor lines (at top visually)
+        V1(Vapor from Inlet Seps)
+        V2(Vapor from HT)
+        V3(Vapor from VRTs)
+        V4(Vapor from Oil Tanks)
 
-        %% Water lines (bottom)
-        A --> W1[To Water Tanks]:::water
-        B --> W2[To Water Tanks]:::water
+        %% Main process flow
+        A[Inlet Separators] --> B[Heater Treaters]
+        B --> C[VRTs]
+        C --> D[Oil Tanks]
 
-        %% Styles
-        classDef oil stroke:#000,stroke-width:2px;
-        classDef water stroke:#1f77b4,stroke-width:2px;
-        classDef vapor stroke:#d62728,stroke-width:2px,stroke-dasharray: 5 5;
+        %% Water paths (bottom)
+        A --> W1[Water from Inlet Seps to Water Tanks]
+        B --> W2[Water from HT to Water Tanks]
+
+        %% Vapor connections
+        A --> V1
+        B --> V2
+        C --> V3
+        D --> V4
     """
 
     st_mermaid(diagram)
+
 
