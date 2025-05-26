@@ -143,7 +143,7 @@ with tab3:
 # Tab 4: MAIN TANK VENT
 # -----------------------------
 with tab4:
-    st.header("🌬 MAIN TANK VENT HEADER1 (3" and 4")")
+    st.header('🌬 MAIN TANK VENT HEADER1 (3" and 4")')
 
     header_configs = [
         {"label": '3"', "id_in": 3.068},
