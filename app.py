@@ -656,14 +656,25 @@ with tab8:
 # -----------------------------
 from streamlit_mermaid import st_mermaid
 
-diagram = """
+with tab9:
+    st.header("📈 Oil System Flow – Process Flow Diagram")
+
+    # Input block
+    inlet_seps = st.number_input("Number of Inlet Separators", min_value=0, value=2)
+    ht = st.number_input("Number of Heater Treaters (HT)", min_value=0, value=1)
+    vrt = st.number_input("Number of VRTs", min_value=0, value=1)
+
+    st.markdown("### 🛢️ Oil Flow Path")
+
+    # Mermaid diagram using values
+    diagram = f"""
 flowchart LR
-A[Inlet Separators] --> B[Heater Treaters]
-B --> C[VRTs]
+A[Inlet Separators ({inlet_seps})] --> B[Heater Treaters ({ht})]
+B --> C[VRTs ({vrt})]
 C --> D[Oil Tanks]
 """
+    st_mermaid(diagram)
 
-st_mermaid(diagram)
 
 
 
