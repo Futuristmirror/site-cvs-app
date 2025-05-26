@@ -720,7 +720,7 @@ flowchart TB
     class VA,VB,VC,VD vaporNode;
     class A,B,C,D solidBlackBox;
 """
-    st_mermaid(diagram)
+st_mermaid(diagram)
 
 
 
