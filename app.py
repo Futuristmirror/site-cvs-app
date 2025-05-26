@@ -143,7 +143,7 @@ with tab3:
 # -----------------------------
 # Tab 🌬 MAIN TANK VENT1: MAIN TANK VENT / FLARE VENT
 # -----------------------------
-with tab🌬 MAIN TANK VENT1:
+with tab MAIN TANK VENT1:
     st.header("🌬 MAIN TANK VENT1 (Full Range)")
 
     st.subheader("Summary")
@@ -251,7 +251,7 @@ with tab🌬 MAIN TANK VENT1:
 # -----------------------------
 # Tab 🌬 MAIN TANK VENT2: MAIN TANK VENT / FLARE VENT
 # -----------------------------
-with tab🌬 MAIN TANK VENT2:
+with tab MAIN TANK VENT2:
     st.header("🌬 MAIN TANK VENT2 (Full Range)")
 
     st.subheader("Summary")
@@ -359,7 +359,7 @@ with tab🌬 MAIN TANK VENT2:
 # -----------------------------
 # Tab 🌬 FlareVent: MAIN TANK VENT / FLARE VENT
 # -----------------------------
-with tab🌬 FlareVent:
+with tab FlareVent:
     st.header("🌬 FlareVent (Full Range)")
 
     st.subheader("Summary")
