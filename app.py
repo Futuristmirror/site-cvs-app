@@ -667,10 +667,10 @@ with tab9:
     st.markdown("### 🛢️ Oil Flow Path")
 
     diagram = f"""flowchart LR
-    A[Inlet Separators ({inlet_seps})] --> B[Heater Treaters ({ht})]
-    B --> C[VRTs ({vrt})]
-    C --> D[Oil Tanks]
-    """
+A[Inlet Separators ({inlet_seps})] --> B[Heater Treaters ({ht})]
+B --> C[VRTs ({vrt})]
+C --> D[Oil Tanks]
+"""
 
     st_mermaid(diagram)
 
