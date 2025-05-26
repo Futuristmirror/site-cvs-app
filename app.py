@@ -19,10 +19,6 @@ tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = st.tabs([
     "📈 Process Flow Diagram"
 ])
 
-
-
-
-
 # -----------------------------
 # Tab 1: Tank Layout
 # -----------------------------
@@ -649,7 +645,7 @@ with tab8:
     st.metric("Total Thermal PPIVFR (mmscfd)", f"{total_thermal_ppivfr:.5f}")
     st.metric("Minimum Thief Hatch/PRV (osig)", f"{thief_prv_input:.2f}")
     st.metric("Design Pressure (osig)", f"{design_pressure:.2f}")
-    st.info("🛠 GOT PISSED AND STOPPED HERE")
+
 # -----------------------------
 # Tab 9: Process Flow Diagram
 # -----------------------------
