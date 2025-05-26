@@ -6,11 +6,18 @@ st.set_page_config(page_title="Closed Vent System Calculator", layout="wide")
 st.title("Closed Vent System Assessment Tool")
 
 # Setup Tabs
-tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs([
-    "🛢 Tank Layout", "🌊 Main Process", "➕ Add to Main Process",
-    "🌬 MAIN TANK VENT", "🌬 MAIN TANK VENT HEADER2",
-    "🌬 FlareVent", "Flare1", "📊 SUMMARY OF RESULTS"
+tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = st.tabs([
+    "🛢 Tank Layout",
+    "🌊 Main Process",
+    "➕ Add to Main Process",
+    "🌬 MAIN TANK VENT",
+    "🌬 MAIN TANK VENT HEADER2",
+    "🌬 FlareVent",
+    "Flare1",
+    "📊 Summary of Results",
+    "📈 Process Flow Diagram"
 ])
+
 
 
 
@@ -641,6 +648,33 @@ with tab8:
     st.metric("Total Thermal PPIVFR (mmscfd)", f"{total_thermal_ppivfr:.5f}")
     st.metric("Minimum Thief Hatch/PRV (osig)", f"{thief_prv_input:.2f}")
     st.metric("Design Pressure (osig)", f"{design_pressure:.2f}")
+
+# -----------------------------
+# Tab 9: Process Flow Diagram
+# -----------------------------
+
+import graphviz
+
+with tab9:
+    st.header("📈 Process Flow Diagram")
+
+    dot = graphviz.Digraph()
+
+    dot.attr(rankdir='LR')  # optional: makes it flow left to right
+
+    dot.node("T1", "Oil Tanks\n500 bbl x 4", shape="box")
+    dot.node("T2", "Water Tanks\n500 bbl x 3", shape="box")
+    dot.node("S", "Separator", shape="ellipse")
+    dot.node("V", "Vent Header", shape="box")
+    dot.node("F", "Flare", shape="octagon")
+
+    dot.edge("T1", "S")
+    dot.edge("T2", "S")
+    dot.edge("S", "V")
+    dot.edge("V", "F")
+
+    st.graphviz_chart(dot)
+
 
 
 
