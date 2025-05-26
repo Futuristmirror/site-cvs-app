@@ -170,36 +170,49 @@ with tab4:
 
     st.subheader("Pipe Fittings – 3\"")
 
-    # Inputs: Quantities for fittings (G13–G16)
-    tee_run = st.number_input("Tee, Flow thru run (qty)", min_value=0, value=0, step=1)
-    tee_branch = st.number_input("Tee, Flow thru branch (qty)", min_value=0, value=0, step=1)
-    elbow_90 = st.number_input("Elbow, 90° Threaded (qty)", min_value=0, value=0, step=1)
-    elbow_45 = st.number_input("Elbow, 45° Threaded (qty)", min_value=0, value=0, step=1)
+    def fitting_input_and_le(label, multiplier):
+        qty = st.number_input(f"{label} (qty)", min_value=0, value=0, step=1)
+        le = qty * (1 / 12) * ID_in * multiplier
+        return qty, le
 
-    # Calculated Le values (H13–H16)
-    def calc_le(qty, multiplier):
-        return qty * (1 / 12) * ID_in * multiplier
+    # Create layout for inputs and LE calculations
+    fitting_data = [
+        ("Tee, Flow thru run", 20),
+        ("Tee, Flow thru branch", 60),
+        ("Elbow, 90° Threaded", 30),
+        ("Elbow, 45° Threaded", 16),
+        ("Elbow, 90° (R/D ~3)", 14),
+        ("Elbow, 45° (R/D ~3)", 9.9),
+        ("Gate Valve", 8),
+        ("Globe Valve", 340),
+        ("Ball Valve", 3),
+        ("Butterfly Valve", 45),
+        ("Check Valve", 100),
+        ("Entrance / Exit", 1)
+    ]
 
-    le_tee_run = calc_le(tee_run, 20)
-    le_tee_branch = calc_le(tee_branch, 60)
-    le_elbow_90 = calc_le(elbow_90, 30)
-    le_elbow_45 = calc_le(elbow_45, 16)
-
+    total_le = 0
     st.markdown("#### Equivalent Lengths (Le, ft)")
 
-    le_col1, le_col2 = st.columns(2)
-    with le_col1:
-        st.metric("Le - Tee, Run", f"{le_tee_run:.2f}")
-        st.metric("Le - Tee, Branch", f"{le_tee_branch:.2f}")
-    with le_col2:
-        st.metric("Le - Elbow 90°", f"{le_elbow_90:.2f}")
-        st.metric("Le - Elbow 45°", f"{le_elbow_45:.2f}")
+    for i in range(0, len(fitting_data), 2):
+        col1, col2 = st.columns(2)
+
+        label1, mult1 = fitting_data[i]
+        _, le1 = fitting_input_and_le(label1, mult1)
+        total_le += le1
+        col1.metric(f"Le - {label1}", f"{le1:.2f}")
+
+        if i + 1 < len(fitting_data):
+            label2, mult2 = fitting_data[i + 1]
+            _, le2 = fitting_input_and_le(label2, mult2)
+            total_le += le2
+            col2.metric(f"Le - {label2}", f"{le2:.2f}")
 
     st.subheader("Summary")
 
-    total_le = le_tee_run + le_tee_branch + le_elbow_90 + le_elbow_45
     total_pipe = developed_length + total_le
 
     st.metric("Total Equivalent Fittings Le (ft)", f"{total_le:.2f}")
     st.metric("Total Length of 3\" Header (ft)", f"{total_pipe:.2f}")
+
 
