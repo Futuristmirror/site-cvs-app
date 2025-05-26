@@ -659,21 +659,27 @@ from streamlit_mermaid import st_mermaid
 with tab9:
     st.header("📈 Oil System Flow – Process Flow Diagram")
 
-    # Input block
+    # Oil system inputs
     inlet_seps = st.number_input("Number of Inlet Separators", min_value=0, value=2)
     ht = st.number_input("Number of Heater Treaters (HT)", min_value=0, value=1)
     vrt = st.number_input("Number of VRTs", min_value=0, value=1)
 
-    st.markdown("### 🛢️ Oil Flow Path")
+    st.markdown("### 🛢️ Oil & Water Flow Path")
 
-    # Mermaid diagram using values
     diagram = f"""
 flowchart LR
-A[Inlet Separators ({inlet_seps})] --> B[Heater Treaters ({ht})]
-B --> C[VRTs ({vrt})]
-C --> D[Oil Tanks]
+    A[Inlet Separators] --> B[Heater Treaters] --> C[VRTs] --> D[Oil Tanks]
+    
+    A --> A1
+    B --> B1
+    C --> C1
+
+    A1 -.-> W[Water Tanks]
+    B1 -.-> W
+    C1 -.-> W
 """
     st_mermaid(diagram)
+
 
 
 
