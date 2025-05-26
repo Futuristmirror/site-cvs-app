@@ -6,7 +6,7 @@ st.set_page_config(page_title="Closed Vent System Calculator", layout="wide")
 st.title("Closed Vent System Assessment Tool")
 
 # Setup Tabs
-tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(["🛢 Tank Layout", "🌊 Main Process", "➕ Add to Main Process", "🌬 MAIN TANK VENT", "🌬 MAIN TANK VENT HEADER2", "🌬 FlareVent", "🌬 Flare1"])
+tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(["🛢 Tank Layout", "🌊 Main Process", "➕ Add to Main Process", "🌬 MAIN TANK VENT", "🌬 MAIN TANK VENT HEADER2", "🌬 FlareVent", "Flare1"])
 
 
 # -----------------------------
@@ -467,7 +467,7 @@ with tab6:
 # Tab 7: Flare1
 # -----------------------------
 with tab7:
-    st.header("🌬 Flare1 (Full Range)")
+    st.header("Flare1 (Full Range)")
     # continue with the rest of your logic...
 
     st.subheader("Summary")
