@@ -716,5 +716,7 @@ with tab9:
         classDef vaporLine stroke:#d62728,stroke-width:2px,stroke-dasharray: 5 5;
         classDef vaporNode fill:#ffe6e6,color:#d62728,stroke:#d62728;
     """
+st_mermaid(diagram)
+    
 
     st_mermaid(diagram)
