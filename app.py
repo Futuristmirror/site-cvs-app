@@ -6,7 +6,7 @@ st.set_page_config(page_title="Closed Vent System Calculator", layout="wide")
 st.title("Closed Vent System Assessment Tool")
 
 # Setup Tabs
-tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(["🛢 Tank Layout", "🌊 Main Process", "➕ Add to Main Process", "🌬 MAIN TANK VENT", "🌬 MAIN TANK VENT HEADER2", "🌬 FlareVent", "Flare1"])
+tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs(["🛢 Tank Layout", "🌊 Main Process", "➕ Add to Main Process", "🌬 MAIN TANK VENT", "🌬 MAIN TANK VENT HEADER2", "🌬 FlareVent", "Flare1", "📊 SUMMARY OF RESULTS"])
 
 
 # -----------------------------
@@ -599,3 +599,33 @@ with tab7:
         with c3:
             st.metric("Red. Capacity MMSCFD/SQRT(psig), SG=1", f"{red_capacity:.5f}")
             st.metric("Turn OFF (oz)", f"{turn_off_oz:.1f}")
+# -----------------------------
+# Tab 8: SUMMARY OF RESULTS
+# -----------------------------
+tab8 = st.tabs(["📊 SUMMARY OF RESULTS"])[0]
+
+with tab8:
+    st.header("📊 SUMMARY OF RESULTS")
+
+    # Dummy variables (replace with actual session state or shared values later)
+    oil_ppivfr = 0.01234
+    water_ppivfr = 0.01147
+    other_ppivfr = st.number_input("Other PPIVFR (mmscfd, SG=1)", min_value=0.0, value=0.00500, step=0.001)
+    total_ppivfr = oil_ppivfr + water_ppivfr + other_ppivfr
+
+    total_thermal_ppivfr = 0.03560  # replace with actual value
+    thief_prv_input = 8.0           # replace with actual input
+    leaking_safety = 2.0            # replace with actual input
+    design_pressure = (thief_prv_input - leaking_safety) * 0.9
+
+    st.subheader("PPIVFR Breakdown (mmscfd, SG=1)")
+    st.metric("Oil PPIVFR", f"{oil_ppivfr:.5f}")
+    st.metric("Water PPIVFR", f"{water_ppivfr:.5f}")
+    st.metric("Other PPIVFR", f"{other_ppivfr:.5f}")
+    st.metric("Total PPIVFR", f"{total_ppivfr:.5f}")
+
+    st.markdown("---")
+    st.subheader("System Pressure Information")
+    st.metric("Total Thermal PPIVFR", f"{total_thermal_ppivfr:.5f} mmscfd")
+    st.metric("Minimum Thief Hatch/PRV", f"{thief_prv_input:.2f} osig")
+    st.metric("Design Pressure", f"{design_pressure:.2f} osig")
