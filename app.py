@@ -656,12 +656,14 @@ with tab8:
 # -----------------------------
 from streamlit_mermaid import st_mermaid
 
-with tab9:
-    st.header("📈 Oil System Flow – Process Flow Diagram")
-
+diagram = """
 flowchart LR
-    A[Inlet Separators] --> B[Heater Treaters]
-    B --> C[VRTs]
-    C --> D[Oil Tanks]
+A[Inlet Separators] --> B[Heater Treaters]
+B --> C[VRTs]
+C --> D[Oil Tanks]
+"""
+
+st_mermaid(diagram)
+
 
 
