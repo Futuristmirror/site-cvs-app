@@ -463,6 +463,7 @@ with tab6:
         with c1:
             st.metric("Total Length (ft) of 3\" NPS", f"{total_nps_sum:.2f}")
         with c2:
+            st.metric("Capacity (MMSCFD/SQRT(psi))", f"{capacity:.5f}" if capacity else "")
 # ----------------------------- 
 # Tab 7: Flare1
 # -----------------------------
