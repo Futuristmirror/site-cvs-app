@@ -464,7 +464,7 @@ with tab6:
             st.metric("Total Length (ft) of 3\" NPS", f"{total_nps_sum:.2f}")
         with c2:
 # ----------------------------- 
-# Tab 7: Flare1 (No Capacity)
+# Tab 7: Flare1
 # -----------------------------
 with tab7:
     st.header("🌬 Flare1 (Full Range)")
@@ -563,6 +563,4 @@ with tab7:
     with summary_placeholder.container():
         st.metric("Total Length (ft) of 3\" NPS", f"{total_nps_sum:.2f}")
 
-            
-            st.metric("Capacity (MMSCFD/SQRT(psi))", f"{capacity:.5f}" if capacity else "")
 
