@@ -717,15 +717,4 @@ with tab9:
         classDef vaporNode fill:#ffe6e6,color:#d62728,stroke:#d62728;
     """
 
-    # Render enlarged diagram using raw HTML
-    st.markdown(
-        f"""
-        <div style="zoom: 1.5;">
-            <pre class="mermaid">
-{diagram}
-            </pre>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
+    st_mermaid(diagram)
