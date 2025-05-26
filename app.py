@@ -249,5 +249,3 @@ with tab4:
         with c2:
             st.metric("Capacity (MMSCFD/SQRT(psi))", f"{capacity:.5f}" if capacity else "")
 
-with tab5: render_vent_tab("MAIN TANK VENT2")
-with tab6: render_vent_tab("FlareVent")
