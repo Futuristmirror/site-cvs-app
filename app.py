@@ -6,7 +6,13 @@ st.set_page_config(page_title="Closed Vent System Calculator", layout="wide")
 st.title("Closed Vent System Assessment Tool")
 
 # Setup Tabs
-tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs(["🛢 Tank Layout", "🌊 Main Process", "➕ Add to Main Process", "🌬 MAIN TANK VENT", "🌬 MAIN TANK VENT HEADER2", "🌬 FlareVent", "Flare1", "📊 SUMMARY OF RESULTS"])
+tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs([
+    "🛢 Tank Layout", "🌊 Main Process", "➕ Add to Main Process",
+    "🌬 MAIN TANK VENT", "🌬 MAIN TANK VENT HEADER2",
+    "🌬 FlareVent", "Flare1", "📊 SUMMARY OF RESULTS"
+])
+
+
 
 
 # -----------------------------
@@ -611,6 +617,8 @@ tab8 = st.tabs(["📊 SUMMARY OF RESULTS"])[0]
 
 with tab8:
     st.header("📊 SUMMARY OF RESULTS")
+    ...
+
 
     # Pull stored values or fallback to default if missing
     oil_ppivfr = st.session_state.get("oil_ppivfr", 0.0)
