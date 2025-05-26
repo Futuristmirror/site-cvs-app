@@ -650,7 +650,6 @@ with tab8:
     st.metric("Minimum Thief Hatch/PRV (osig)", f"{thief_prv_input:.2f}")
     st.metric("Design Pressure (osig)", f"{design_pressure:.2f}")
 
-
 # -----------------------------
 # Tab 9: Process Flow Diagram
 # -----------------------------
@@ -667,16 +666,22 @@ with tab9:
     st.markdown("### 🛢️ Oil & Water Flow Path")
 
     diagram = f"""
-flowchart LR
-    A[Inlet Separators] --> B[Heater Treaters] --> C[VRTs] --> D[Oil Tanks]
-    
-    A --> W1
-    B --> W2
+    flowchart LR
+        A[Inlet Separators] --> B[Heater Treaters] --> C[VRTs] --> D[Oil Tanks]
 
-    W1 -.-> W[Water Tanks]
-    W2 -.-> W
-"""
+        %% Water out bottom of A and B
+        A --> W1[To Water Tanks]
+        B --> W2[To Water Tanks]
+
+        %% Vapor lines out top
+        A -.-> VA[Vapor from Inlet Seps]
+        B -.-> VB[Vapor from HT]
+        C -.-> VC[Vapor from VRTs]
+        D -.-> VD[Vapor from Oil Tanks]
+    """
+
     st_mermaid(diagram)
+
 
 
 
