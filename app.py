@@ -645,7 +645,7 @@ with tab8:
     st.metric("Total Thermal PPIVFR (mmscfd)", f"{total_thermal_ppivfr:.5f}")
     st.metric("Minimum Thief Hatch/PRV (osig)", f"{thief_prv_input:.2f}")
     st.metric("Design Pressure (osig)", f"{design_pressure:.2f}")
-
+    st.info("🛠 GOT PISSED AND STOPPED HERE")
 # -----------------------------
 # Tab 9: Process Flow Diagram
 # -----------------------------
@@ -716,7 +716,7 @@ with tab9:
         classDef vaporLine stroke:#d62728,stroke-width:2px,stroke-dasharray: 5 5;
         classDef vaporNode fill:#ffe6e6,color:#d62728,stroke:#d62728;
     """
-st_mermaid(diagram)
+        st_mermaid(diagram)
     
 
     st_mermaid(diagram)
