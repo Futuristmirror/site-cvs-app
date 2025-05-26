@@ -180,15 +180,11 @@ with tab4:
         else:
             return (1 / 12) * ID_in * 0.5 * (1 - ((diam**2) / (ID_in**2)))
 
-    knockout_le_total = 0
-    for i in range(3):
-        col1, col2 = st.columns(2)
-        with col1:
-            d = st.number_input(f"Knockout {i+1} Diameter (in)", min_value=0.0, value=0.0, key=f"kdiam{i}")
-        with col2:
-            le = knockout_le(d)
-            st.metric(f"Le {i+1}", f"{le:.2f}")
-        knockout_le_total += le
+knockout_le_total = 0
+for i in range(3):
+    d = st.number_input(f"Knockout {i+1} Diameter (in)", min_value=0.0, value=0.0, key=f"kdiam{i}")
+    knockout_le_total += knockout_le(d)
+
 
     st.subheader("Specialty Valves / Components")
 
@@ -200,14 +196,11 @@ with tab4:
         return numerator / denominator
 
     specialty_le_total = 0
-    for i in range(3):
-        col1, col2 = st.columns(2)
-        with col1:
-            cv = st.number_input(f"Specialty Valve {i+1} Cv", min_value=0.0, value=0.0, key=f"cv{i}")
-        with col2:
-            le = specialty_valve_le(cv)
-            st.metric(f"Le {i+1}", f"{le:.2f}")
-        specialty_le_total += le
+specialty_le_total = 0
+for i in range(3):
+    cv = st.number_input(f"Specialty Valve {i+1} Cv", min_value=0.0, value=0.0, key=f"cv{i}")
+    specialty_le_total += specialty_valve_le(cv)
+
 
     # Final Summary Output
     st.subheader("Total Equivalent Length Summary")
