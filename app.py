@@ -564,5 +564,39 @@ with tab7:
 
     with summary_placeholder.container():
         st.metric("Total Length (ft) of 3\" NPS", f"{total_nps_sum:.2f}")
+summary_lengths = []
+    total_nps_sum = 0
 
+    # 🔹 Control Device Inputs (Green)
+    control_device_model = st.text_input("Control Device Make/Model", value="Steffes SVG-3B4", key="cd_model")
+    user_capacity_input = st.number_input("MMSCFD/SQRT(psig), SG=1", min_value=0.0, value=0.299, key="cd_capacity")
+    turn_on_oz = st.number_input("Turn ON (oz)", min_value=0.0, value=0.0, key="cd_turn_on")
+    turn_off_oz = st.number_input("Turn OFF (oz)", min_value=0.0, value=0.0, key="cd_turn_off")
+
+    # 🔹 Calculated Metrics (Blue)
+    if user_capacity_input > 0:
+        le_ft = 0.22437 * (3.068 ** 5) / ((user_capacity_input ** 2) * (1 + (3.6 / 3.068) + (0.03 * 3.068)))
+    else:
+        le_ft = 0.0
+
+    # Assume this comes from pipe length calc above — replace with your actual total
+    system_pipe_length = 301.12  # Example value
+    wfittings_ft = le_ft + system_pipe_length
+
+    if wfittings_ft > 0:
+        red_capacity = math.sqrt(0.22437 * (3.068 ** 5) / (wfittings_ft * (1 + (3.6 / 3.068) + (0.03 * 3.068))))
+    else:
+        red_capacity = 0.0
+
+    st.markdown("### 🔵 Control Device Output")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("Le, ft (3\" pipe)", f"{le_ft:.2f}")
+        st.metric("Turn ON (oz)", f"{turn_on_oz:.1f}")
+    with col2:
+        st.metric("wfittings, ft 3\" pipe", f"{wfittings_ft:.2f}")
+        st.metric("Turn OFF (oz)", f"{turn_off_oz:.1f}")
+    with col3:
+        st.metric("Red. Capacity", f"{red_capacity:.5f}")
+        st.metric("MMSCFD/SQRT(psig)", f"{user_capacity_input:.3f}")
 
