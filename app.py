@@ -662,12 +662,14 @@ with tab9:
     ht = st.number_input("Number of Heater Treaters (HT)", min_value=0, value=1, step=1)
     vrt = st.number_input("Number of VRTs", min_value=0, value=1, step=1)
 
-    # Diagram Text
+    # Mermaid Syntax (must not include line breaks inside node labels)
     diagram = f"""
     graph LR
-        A[Inlet Separators ({inlet_seps})] --> B[Heater Treaters ({ht})]
-        B --> C[VRTs ({vrt})]
-        C --> D[Oil Tanks]
+        A[Inlet Separators ({inlet_seps})]
+        B[Heater Treaters ({ht})]
+        C[VRTs ({vrt})]
+        D[Oil Tanks]
+        A --> B --> C --> D
     """
 
     st.markdown("### 🛢️ Oil Flow Path")
