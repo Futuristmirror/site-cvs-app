@@ -209,20 +209,19 @@ with tab4:
             st.metric(f"Le {i+1}", f"{le:.2f}")
         specialty_le_total += le
 
-  # Final Summary Output
-st.subheader("Total Equivalent Length Summary")
+    # Final Summary Output
+    st.subheader("Total Equivalent Length Summary")
 
-total_pipe = developed_length + total_le_fittings + knockout_le_total + specialty_le_total
+    total_pipe = developed_length + total_le_fittings + knockout_le_total + specialty_le_total
 
-# Total Length of 3" NPS conversion
-numerator = total_pipe * (1 + (3.6 / ID_in) + (0.03 * ID_in)) * (3.068 ** 5)
-denominator = (ID_in ** 5) * (1 + (3.6 / 3.068) + (0.03 * 3.068))
-total_pipe_nps = numerator / denominator
+    # Total Length of 3" NPS conversion
+    numerator = total_pipe * (1 + (3.6 / ID_in) + (0.03 * ID_in)) * (3.068 ** 5)
+    denominator = (ID_in ** 5) * (1 + (3.6 / 3.068) + (0.03 * 3.068))
+    total_pipe_nps = numerator / denominator
 
-# Display only two final metrics
-st.metric("Total Length of 3\" Header (ft)", f"{total_pipe:.2f}")
-st.metric("Total Length (ft) of 3\" NPS", f"{total_pipe_nps:.2f}")
-
+    # Display only two final metrics
+    st.metric("Total Length of 3\" Header (ft)", f"{total_pipe:.2f}")
+    st.metric("Total Length (ft) of 3\" NPS", f"{total_pipe_nps:.2f}")
 
     # Footer calculator
     st.markdown("---")
@@ -240,5 +239,4 @@ st.metric("Total Length (ft) of 3\" NPS", f"{total_pipe_nps:.2f}")
     with col2:
         st.metric("Spitzglass ƒspzz", f"{spitz_factor:.5f}")
         st.metric("Ratio (fr / ƒspzz)", f"{ratio:.4f}")
-
 
