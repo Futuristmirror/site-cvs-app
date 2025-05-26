@@ -468,6 +468,7 @@ with tab6:
 # -----------------------------
 with tab7:
     st.header("🌬 Flare1 (Full Range)")
+    # continue with the rest of your logic...
 
     st.subheader("Summary")
     summary_lengths = []
