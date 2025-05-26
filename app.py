@@ -260,6 +260,7 @@ with tab4:
             st.metric("Total Length (ft) of 3\" NPS", f"{total_nps_sum:.2f}")
         with c2:
             st.metric("Capacity (MMSCFD/SQRT(psi))", f"{capacity:.5f}" if capacity else "")
+            st.session_state["capacity_main_tank_vent"] = capacity
 # ----------------------------- 
 # Tab 5: MAIN TANK VENT HEADER2
 # -----------------------------
@@ -368,6 +369,7 @@ with tab5:
             st.metric("Total Length (ft) of 3\" NPS", f"{total_nps_sum:.2f}")
         with c2:
             st.metric("Capacity (MMSCFD/SQRT(psi))", f"{capacity:.5f}" if capacity else "")
+            st.session_state["capacity_main_tank_vent_header2"] = capacity
 # ----------------------------- 
 # Tab 6: FlareVent
 # -----------------------------
