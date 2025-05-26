@@ -650,31 +650,20 @@ with tab8:
     st.metric("Minimum Thief Hatch/PRV (osig)", f"{thief_prv_input:.2f}")
     st.metric("Design Pressure (osig)", f"{design_pressure:.2f}")
 
+
 # -----------------------------
 # Tab 9: Process Flow Diagram
 # -----------------------------
-
-import graphviz
-
 with tab9:
     st.header("📈 Process Flow Diagram")
 
-    dot = graphviz.Digraph()
-
-    dot.attr(rankdir='LR')  # optional: makes it flow left to right
-
-    dot.node("T1", "Oil Tanks\n500 bbl x 4", shape="box")
-    dot.node("T2", "Water Tanks\n500 bbl x 3", shape="box")
-    dot.node("S", "Separator", shape="ellipse")
-    dot.node("V", "Vent Header", shape="box")
-    dot.node("F", "Flare", shape="octagon")
-
-    dot.edge("T1", "S")
-    dot.edge("T2", "S")
-    dot.edge("S", "V")
-    dot.edge("V", "F")
-
-    st.graphviz_chart(dot)
+    st_mermaid("""
+    graph LR
+        T1[Oil Tanks: 500 bbl x 4] --> S[Separator]
+        T2[Water Tanks: 500 bbl x 3] --> S
+        S --> V[Vent Header]
+        V --> F[Flare]
+    """)
 
 
 
