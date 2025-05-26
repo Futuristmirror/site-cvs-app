@@ -653,9 +653,6 @@ with tab8:
 # -----------------------------
 # Tab 9: Process Flow Diagram
 # -----------------------------
-# -----------------------------
-# Tab 9: Process Flow Diagram
-# -----------------------------
 from streamlit_mermaid import st_mermaid
 
 with tab9:
@@ -670,20 +667,28 @@ with tab9:
 
     diagram = f"""
     flowchart LR
+        %% Vapor lines first so they render on top
+        VA[Vapor from Inlet Seps]
+        VB[Vapor from HT]
+        VC[Vapor from VRTs]
+        VD[Vapor from Oil Tanks]
+
+        %% Main oil flow
         A[Inlet Separators] --> B[Heater Treaters] --> C[VRTs] --> D[Oil Tanks]
 
-        %% Water out bottom of A and B
+        %% Water out bottom
         A --> W1[To Water Tanks]
         B --> W2[To Water Tanks]
 
-        %% Vapor lines out top
-        A -.-> VA[Vapor from Inlet Seps]
-        B -.-> VB[Vapor from HT]
-        C -.-> VC[Vapor from VRTs]
-        D -.-> VD[Vapor from Oil Tanks]
+        %% Vapor connections as dashed lines upward
+        A -.-> VA
+        B -.-> VB
+        C -.-> VC
+        D -.-> VD
     """
 
     st_mermaid(diagram)
+
 
 
 
