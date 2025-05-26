@@ -564,8 +564,8 @@ with tab7:
 
     with summary_placeholder.container():
         st.metric("Total Length (ft) of 3\" NPS", f"{total_nps_sum:.2f}")
-summary_lengths = []
-    total_nps_sum = 0
+    summary_lengths = []
+    total_nps_sum = sum(summary_lengths)  # You can replace this with your actual sum logic
 
     # 🔹 Control Device Inputs (Green)
     control_device_model = st.text_input("Control Device Make/Model", value="Steffes SVG-3B4", key="cd_model")
@@ -579,24 +579,23 @@ summary_lengths = []
     else:
         le_ft = 0.0
 
-    # Assume this comes from pipe length calc above — replace with your actual total
-    system_pipe_length = 301.12  # Example value
-    wfittings_ft = le_ft + system_pipe_length
+    wfittings_ft = le_ft + total_nps_sum
 
     if wfittings_ft > 0:
         red_capacity = math.sqrt(0.22437 * (3.068 ** 5) / (wfittings_ft * (1 + (3.6 / 3.068) + (0.03 * 3.068))))
     else:
         red_capacity = 0.0
 
-    st.markdown("### 🔵 Control Device Output")
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.metric("Le, ft (3\" pipe)", f"{le_ft:.2f}")
-        st.metric("Turn ON (oz)", f"{turn_on_oz:.1f}")
-    with col2:
-        st.metric("wfittings, ft 3\" pipe", f"{wfittings_ft:.2f}")
-        st.metric("Turn OFF (oz)", f"{turn_off_oz:.1f}")
-    with col3:
-        st.metric("Red. Capacity", f"{red_capacity:.5f}")
-        st.metric("MMSCFD/SQRT(psig)", f"{user_capacity_input:.3f}")
-
+    # 🔵 Display section — Only st.metric calls here
+    with summary_placeholder.container():
+        st.markdown("### 🔵 Control Device Output")
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric("Le, ft (3\" pipe)", f"{le_ft:.2f}")
+            st.metric("Turn ON (oz)", f"{turn_on_oz:.1f}")
+        with col2:
+            st.metric("wfittings, ft 3\" pipe", f"{wfittings_ft:.2f}")
+            st.metric("Turn OFF (oz)", f"{turn_off_oz:.1f}")
+        with col3:
+            st.metric("Red. Capacity", f"{red_capacity:.5f}")
+            st.metric("MMSCFD/SQRT(psig)", f"{user_capacity_input:.3f}")
