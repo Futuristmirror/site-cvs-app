@@ -672,11 +672,9 @@ flowchart LR
     
     A --> W1
     B --> W2
-    C --> W3
 
     W1 -.-> W[Water Tanks]
     W2 -.-> W
-    W3 -.-> W
 """
     st_mermaid(diagram)
 
