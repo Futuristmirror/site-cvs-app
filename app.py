@@ -613,7 +613,6 @@ with tab7:
 # -----------------------------
 # Tab 8: SUMMARY OF RESULTS
 # -----------------------------
-tab8 = st.tabs(["📊 SUMMARY OF RESULTS"])[0]
 
 with tab8:
     st.header("📊 SUMMARY OF RESULTS")
