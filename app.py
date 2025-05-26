@@ -658,35 +658,46 @@ from streamlit_mermaid import st_mermaid
 with tab9:
     st.header("📈 Oil System Flow – Process Flow Diagram")
 
-    # Oil system inputs
+    # User inputs
     inlet_seps = st.number_input("Number of Inlet Separators", min_value=0, value=2)
     ht = st.number_input("Number of Heater Treaters (HT)", min_value=0, value=1)
     vrt = st.number_input("Number of VRTs", min_value=0, value=1)
 
     st.markdown("### 🛢️ Oil & Water Flow Path")
 
-    diagram = f"""
+    diagram = """
     flowchart LR
-        A[Inlet Separators] --> B[Heater Treaters] --> C[VRTs] --> D[Oil Tanks]
+        %% Nodes
+        A[Inlet Separators]
+        B[Heater Treaters]
+        C[VRTs]
+        D[Oil Tanks]
+        W1[To Water Tanks]
+        W2[To Water Tanks]
+        VA[To Sales/Flare]
+        VB[To Sales/Flare]
+        VC[To MP Flare]
+        VD[To LP Flare]
 
-        %% Water out bottom of A and B
-        A --> W1[To Water Tanks]
-        B --> W2[To Water Tanks]
+        %% Oil path
+        A --> B:::oil
+        B --> C:::oil
+        C --> D:::oil
 
-        %% Vapor lines out top
-        A -.-> VA[Vapor from Inlet Seps]
-        B -.-> VB[Vapor from HT]
-        C -.-> VC[Vapor from VRTs]
-        D -.-> VD[Vapor from Oil Tanks]
+        %% Water lines
+        A --> W1:::water
+        B --> W2:::water
+
+        %% Vapor lines (from top, red)
+        A -.-> VA:::vapor
+        B -.-> VB:::vapor
+        C -.-> VC:::vapor
+        D -.-> VD:::vapor
+
+        %% Styles
+        classDef oil stroke:#000,stroke-width:2px;
+        classDef water stroke:#1f77b4,stroke-width:2px;
+        classDef vapor stroke:#d62728,stroke-width:2px,stroke-dasharray: 5 5;
     """
 
     st_mermaid(diagram)
-
-
-
-
-
-
-
-
-
