@@ -156,6 +156,8 @@ with tab4:
         {"label": '12"', "id_in": 11.938},
     ]
 
+    summary_lengths = []
+
     col_sets = st.columns(len(id_configs))
 
     for config, col in zip(id_configs, col_sets):
@@ -187,7 +189,6 @@ with tab4:
             total_le_fittings = sum(fitting_input(name, mult) for name, mult in fittings)
 
             # Knockouts
-            st.markdown(f"**{label} Knockouts**")
             def knockout_le(diam):
                 if diam == 0:
                     return 0.0
@@ -202,7 +203,6 @@ with tab4:
                 knockout_le_total += knockout_le(d)
 
             # Specialty Valves
-            st.markdown(f"**{label} Specialty Valves**")
             def specialty_valve_le(cv):
                 if cv == 0:
                     return 0.0
@@ -215,28 +215,30 @@ with tab4:
                 cv = st.number_input(f"{label} Specialty Valve {i+1} Cv", min_value=0.0, value=0.0, key=f"cv{i}_{label}")
                 specialty_le_total += specialty_valve_le(cv)
 
-            # Final Summary
             total_pipe = developed_length + total_le_fittings + knockout_le_total + specialty_le_total
 
             numerator = total_pipe * (1 + (3.6 / ID_in) + (0.03 * ID_in)) * (3.068 ** 5)
             denominator = (ID_in ** 5) * (1 + (3.6 / 3.068) + (0.03 * 3.068))
             total_pipe_nps = numerator / denominator
 
+            summary_lengths.append(total_pipe_nps if total_pipe_nps > 0 else 0.0)
+
             st.metric(f"{label} Total Header Length (ft)", f"{total_pipe:.2f}")
             st.metric(f"{label} Total Length (ft) of 3\" NPS", f"{total_pipe_nps:.2f}")
 
-            # Footer Calculator
-            st.markdown("**Spitzglass Friction (Based on ID Only)**")
-            eD = 12 * 0.00015 / ID_in
-            turb_factor = 0.25 / (math.log10(eD / 3.7) ** 2)
-            spitz_factor = (1 + 3.6 / ID_in + 0.03 * ID_in) / 100
-            ratio = turb_factor / spitz_factor
+    # --------- Summary Box ---------
+    st.markdown("---")
+    st.subheader("Summary")
+    total_nps_sum = sum(summary_lengths)
 
-            c1, c2 = st.columns(2)
-            with c1:
-                st.metric(f"{label} ε/D", f"{eD:.5f}")
-                st.metric(f"{label} Turb Friction Factor fr", f"{turb_factor:.4f}")
-            with c2:
-                st.metric(f"{label} Spitzglass ƒspzz", f"{spitz_factor:.5f}")
-                st.metric(f"{label} Ratio (fr / ƒspzz)", f"{ratio:.4f}")
+    if total_nps_sum == 0:
+        capacity = ""
+    else:
+        capacity = math.sqrt((0.22437 * (3.068 ** 5)) / (total_nps_sum * (1 + (3.6 / 3.068) + (0.03 * 3.068))))
+
+    c1, c2 = st.columns(2)
+    with c1:
+        st.metric("Total Length (ft) of 3\" NPS", f"{total_nps_sum:.2f}")
+    with c2:
+        st.metric("Capacity (MMSCFD/SQRT(psi))", f"{capacity:.5f}" if capacity else "")
 
