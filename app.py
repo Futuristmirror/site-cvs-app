@@ -39,13 +39,16 @@ with tab1:
     total_thermal_ppivfr = (oil_scfh + water_scfh) * 24 / 1_000_000
     st.markdown("#### Total Thermal PPIVFR")
     st.metric("Total Thermal PPIVFR", f"{total_thermal_ppivfr:.5f} mmscfd")
+    st.session_state["total_thermal_ppivfr"] = total_thermal_ppivfr
 
     st.markdown("### Pressure Inputs")
     col3, col4 = st.columns(2)
     with col3:
         thief_prv_input = st.number_input("Minimum Thief Hatch/PRV (osig)", min_value=0.0, value=8.0)
+        st.session_state["thief_prv_input"] = thief_prv_input
     with col4:
         leaking_safety = st.number_input("Leaking Safety Factor (osig)", min_value=0.0, value=2.0)
+        st.session_state["leaking_safety"] = leaking_safety
 
     design_pressure = (thief_prv_input - leaking_safety) * 0.9
     st.metric("Design Pressure", f"{design_pressure:.2f} osig")
@@ -96,7 +99,7 @@ with tab2:
         st.write(f"**Oil Flowrate**: {oil_flowrate:.2f} GPM")
         st.write(f"**Adjusted BBL/day (with surge)**: {adjusted_bbl_per_day:.2f}")
         st.metric("Oil PPIVFR (mmscfd, SG=1)", f"{oil_ppivfr:.5f}")
-
+        st.session_state["oil_ppivfr"] = oil_ppivfr
     # -----------------------------
     # Water Section
     # -----------------------------
@@ -129,6 +132,7 @@ with tab2:
         st.write(f"**Water Flowrate**: {water_flowrate:.2f} GPM")
         st.write(f"**Adjusted BBL/day (with surge)**: {adjusted_bbl_per_day_water:.2f}")
         st.metric("Water PPIVFR (mmscfd, SG=1)", f"{water_ppivfr:.5f}")
+        st.session_state["water_ppivfr"] = water_ppivfr
 # -----------------------------
 # Tab 3: Add to Main Process
 # -----------------------------
@@ -136,6 +140,7 @@ with tab3:
     st.header("➕ Add to Main Process")
     other_ppivfr = st.number_input("Other PPIVFR (mmscfd, SG=1)", min_value=0.0, value=0.00500, step=0.001)
     st.metric("Other PPIVFR (mmscfd, SG=1)", f"{other_ppivfr:.5f}")
+    st.session_state["other_ppivfr"] = other_ppivfr
     st.markdown("This section will allow you to define additional process sources that contribute to total PPIVFR (e.g., LACT, Recirc, Vapor Return).")
 
     st.info("🛠 GOT PISSED AND STOPPED HERE")
