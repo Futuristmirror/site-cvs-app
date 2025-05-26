@@ -658,36 +658,55 @@ from streamlit_mermaid import st_mermaid
 with tab9:
     st.header("📈 Oil System Flow – Process Flow Diagram")
 
-    col_left, col_right = st.columns([2, 1])
+    # Oil system inputs
+    inlet_seps = st.number_input("Number of Inlet Separators", min_value=0, value=2)
+    ht = st.number_input("Number of Heater Treaters (HT)", min_value=0, value=1)
+    vrt = st.number_input("Number of VRTs", min_value=0, value=1)
 
-    # 🛢️ Diagram and flowpath in left column
-    with col_left:
-        inlet_seps = st.number_input("Number of Inlet Separators", min_value=0, value=2)
-        ht = st.number_input("Number of Heater Treaters (HT)", min_value=0, value=1)
-        vrt = st.number_input("Number of VRTs", min_value=0, value=1)
-    # 📥 Pressure Inputs in right column
-    with col_right:
-        st.markdown("### 🔧 Max Operating Pressures")
-        inlet_sep_psig = st.number_input("Inlet Seps (psig)", min_value=0.0, value=25.0)
-        ht_psig = st.number_input("HTs (psig)", min_value=0.0, value=50.0)
-        vrt_psig = st.number_input("VRTs (psig)", min_value=0.0, value=10.0)
-        st.markdown("### 🛢️ Oil & Water Flow Path")
+    st.markdown("### 🛢️ Oil & Water Flow Path")
 
-        diagram = f"""
-        flowchart LR
-            A[Inlet Separators] --> B[Heater Treaters] --> C[VRTs] --> D[Oil Tanks]
+    diagram = f"""
+    flowchart LR
 
-            %% Water out bottom of A and B
-            A --> W1[To Water Tanks]
-            B --> W2[To Water Tanks]
+        %% Vapor nodes (top)
+        VA[To Sales/Flare]
+        VB[To Sales/Flare]
+        VC[To MP Flare]
+        VD[To LP Flare]
 
-            %% Vapor lines out top
-            A -.-> VA[Vapor from Inlet Seps]
-            B -.-> VB[Vapor from HT]
-            C -.-> VC[Vapor from VRTs]
-            D -.-> VD[Vapor from Oil Tanks]
-        """
-        st_mermaid(diagram)
+        %% Oil flow (default = black)
+        A[Inlet Separators] --> B[Heater Treaters]
+        B --> C[VRTs]
+        C --> D[Oil Tanks]
+
+        %% Water lines (styled blue)
+        A --> W1[To Water Tanks]
+        B --> W2[To Water Tanks]
+
+        %% Vapor lines (styled red dashed)
+        A -.-> VA
+        B -.-> VB
+        C -.-> VC
+        D -.-> VD
+
+        %% Assign classes
+        class W1,W2 waterLine
+        class VA,VB,VC,VD vaporNode
+        class A,W1 waterLine
+        class B,W2 waterLine
+        class A,VA vaporLine
+        class B,VB vaporLine
+        class C,VC vaporLine
+        class D,VD vaporLine
+
+        %% Styling rules
+        classDef waterLine stroke:#1f77b4,stroke-width:2px;
+        classDef vaporLine stroke:#d62728,stroke-width:2px,stroke-dasharray: 5 5;
+        classDef vaporNode fill:#ffe6e6,color:#d62728,stroke:#d62728;
+    """
+
+    st_mermaid(diagram)
+
 
 
 
