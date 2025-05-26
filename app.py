@@ -144,7 +144,6 @@ with tab3:
 
 # Shared logic block (used in all three vent tabs)
 def render_vent_tab(label_prefix):
-    st.subheader("Summary")
     summary_lengths = []
 
     col_sets = st.columns(8)
@@ -158,6 +157,9 @@ def render_vent_tab(label_prefix):
         {"label": '10"', "id_in": 10.020},
         {"label": '12"', "id_in": 11.938},
     ]
+
+    developed_lengths = {}
+    total_pipes = {}
 
     for config, col in zip(id_configs, col_sets):
         with col:
@@ -235,6 +237,7 @@ def render_vent_tab(label_prefix):
     else:
         capacity = math.sqrt((0.22437 * (3.068 ** 5)) / (total_nps_sum * (1 + (3.6 / 3.068) + (0.03 * 3.068))))
 
+    st.markdown("---")
     st.subheader("Overall System Summary")
     c1, c2 = st.columns(2)
     with c1:
@@ -251,4 +254,3 @@ with tab5:
 
 with tab6:
     render_vent_tab("FLARE VENT")
-
