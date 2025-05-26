@@ -170,6 +170,7 @@ with tab4:
     ]
     total_le_fittings = sum(fitting_input(label, mult) for label, mult in fittings)
 
+    # Knockouts Section (Grouped)
     st.subheader("Knockouts / Expansions")
 
     def knockout_le(diam):
@@ -180,12 +181,12 @@ with tab4:
         else:
             return (1 / 12) * ID_in * 0.5 * (1 - ((diam**2) / (ID_in**2)))
 
-knockout_le_total = 0
-for i in range(3):
-    d = st.number_input(f"Knockout {i+1} Diameter (in)", min_value=0.0, value=0.0, key=f"kdiam{i}")
-    knockout_le_total += knockout_le(d)
+    knockout_le_total = 0
+    for i in range(3):
+        d = st.number_input(f"Knockout {i+1} Diameter (in)", min_value=0.0, value=0.0, key=f"kdiam{i}")
+        knockout_le_total += knockout_le(d)
 
-
+    # Specialty Valves Section (Grouped)
     st.subheader("Specialty Valves / Components")
 
     def specialty_valve_le(cv):
@@ -196,11 +197,9 @@ for i in range(3):
         return numerator / denominator
 
     specialty_le_total = 0
-specialty_le_total = 0
-for i in range(3):
-    cv = st.number_input(f"Specialty Valve {i+1} Cv", min_value=0.0, value=0.0, key=f"cv{i}")
-    specialty_le_total += specialty_valve_le(cv)
-
+    for i in range(3):
+        cv = st.number_input(f"Specialty Valve {i+1} Cv", min_value=0.0, value=0.0, key=f"cv{i}")
+        specialty_le_total += specialty_valve_le(cv)
 
     # Final Summary Output
     st.subheader("Total Equivalent Length Summary")
@@ -232,4 +231,5 @@ for i in range(3):
     with col2:
         st.metric("Spitzglass ƒspzz", f"{spitz_factor:.5f}")
         st.metric("Ratio (fr / ƒspzz)", f"{ratio:.4f}")
+
 
