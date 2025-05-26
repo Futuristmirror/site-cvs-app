@@ -145,37 +145,16 @@ with tab3:
 with tab4:
     st.header("🌬 MAIN TANK VENT HEADER1 (3\" Only)")
 
-    st.markdown("This prototype models the 3\" header row using the original Excel formulas. Blue = calculated values, Green = input.")
-
-    st.subheader("Pipe Characteristics")
-
-    # User input for developed length (G6)
-    developed_length = st.number_input("Developed Length (ft)", min_value=0.0, value=0.0, step=1.0)
-
-    # Constants (G7 to G11)
-    ID_in = 3.068  # G7
-    eD = 12 * 0.00015 / ID_in  # G8
-    turb_factor = 0.25 / (math.log10(eD / 3.7) ** 2)  # G9
-    spitz_factor = (1 + 3.6 / ID_in + 0.03 * ID_in) / 100  # G10
-    ratio = turb_factor / spitz_factor  # G11
-
-    col1, col2 = st.columns(2)
-    with col1:
-        st.metric("ID (inches)", f"{ID_in:.3f}")
-        st.metric("ε/D", f"{eD:.5f}")
-        st.metric("Turb Friction Factor fr", f"{turb_factor:.4f}")
-    with col2:
-        st.metric("Spitzglass ƒspzz", f"{spitz_factor:.5f}")
-        st.metric("Ratio (fr / ƒspzz)", f"{ratio:.4f}")
+    st.markdown("This prototype models the 3\" header row using the original Excel formulas. Only total equivalent length is shown. Pipe property formulas are grouped below by ID.")
 
     st.subheader("Pipe Fittings – 3\"")
 
-    def fitting_input_and_le(label, multiplier):
-        qty = st.number_input(f"{label} (qty)", min_value=0, value=0, step=1)
-        le = qty * (1 / 12) * ID_in * multiplier
-        return qty, le
+    ID_in = 3.068  # Used for all Le calculations
 
-    # Create layout for inputs and LE calculations
+    def fitting_input(label, multiplier):
+        qty = st.number_input(f"{label} (qty)", min_value=0, value=0, step=1)
+        return qty * (1 / 12) * ID_in * multiplier
+
     fitting_data = [
         ("Tee, Flow thru run", 20),
         ("Tee, Flow thru branch", 60),
@@ -192,27 +171,30 @@ with tab4:
     ]
 
     total_le = 0
-    st.markdown("#### Equivalent Lengths (Le, ft)")
+    for label, mult in fitting_data:
+        total_le += fitting_input(label, mult)
 
-    for i in range(0, len(fitting_data), 2):
-        col1, col2 = st.columns(2)
-
-        label1, mult1 = fitting_data[i]
-        _, le1 = fitting_input_and_le(label1, mult1)
-        total_le += le1
-        col1.metric(f"Le - {label1}", f"{le1:.2f}")
-
-        if i + 1 < len(fitting_data):
-            label2, mult2 = fitting_data[i + 1]
-            _, le2 = fitting_input_and_le(label2, mult2)
-            total_le += le2
-            col2.metric(f"Le - {label2}", f"{le2:.2f}")
-
-    st.subheader("Summary")
-
+    developed_length = st.number_input("Developed Length (ft)", min_value=0.0, value=0.0, step=1.0)
     total_pipe = developed_length + total_le
 
+    st.subheader("Summary")
     st.metric("Total Equivalent Fittings Le (ft)", f"{total_le:.2f}")
     st.metric("Total Length of 3\" Header (ft)", f"{total_pipe:.2f}")
+
+    st.subheader("Pipe Property Calculator (by ID only)")
+
+    id_input = st.number_input("Pipe ID (inches)", min_value=0.1, value=3.068, step=0.01)
+    eD = 12 * 0.00015 / id_input
+    turb_factor = 0.25 / (math.log10(eD / 3.7) ** 2)
+    spitz_factor = (1 + 3.6 / id_input + 0.03 * id_input) / 100
+    ratio = turb_factor / spitz_factor
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.metric("ε/D", f"{eD:.5f}")
+        st.metric("Turb Friction Factor fr", f"{turb_factor:.4f}")
+    with col2:
+        st.metric("Spitzglass ƒspzz", f"{spitz_factor:.5f}")
+        st.metric("Ratio (fr / ƒspzz)", f"{ratio:.4f}")
 
 
