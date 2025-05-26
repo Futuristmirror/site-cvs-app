@@ -145,90 +145,92 @@ with tab3:
 with tab4:
     st.header('🌬 MAIN TANK VENT HEADER1 (3" and 4")')
 
-    header_configs = [
+    col_3, col_4 = st.columns(2)
+
+    for config, col in zip([
         {"label": '3"', "id_in": 3.068},
         {"label": '4"', "id_in": 4.026}
-    ]
+    ], [col_3, col_4]):
 
-    for config in header_configs:
-        label = config["label"]
-        ID_in = config["id_in"]
+        with col:
+            label = config["label"]
+            ID_in = config["id_in"]
 
-        st.subheader(f"{label} Pipe Fittings")
-        developed_length = st.number_input(f"{label} Developed Length (ft)", min_value=0.0, value=0.0, step=1.0, key=f"dev_{label}")
+            st.subheader(f"{label} Pipe Fittings")
+            developed_length = st.number_input(f"{label} Developed Length (ft)", min_value=0.0, value=0.0, step=1.0, key=f"dev_{label}")
 
-        def fitting_input(tag, multiplier):
-            qty = st.number_input(f"{label} {tag} (qty)", min_value=0, value=0, step=1, key=f"{tag}_{label}")
-            return qty * (1 / 12) * ID_in * multiplier
+            def fitting_input(tag, multiplier):
+                qty = st.number_input(f"{label} {tag} (qty)", min_value=0, value=0, step=1, key=f"{tag}_{label}")
+                return qty * (1 / 12) * ID_in * multiplier
 
-        fittings = [
-            ("Tee, Flow thru run", 20),
-            ("Tee, Flow thru branch", 60),
-            ("Elbow, 90° Threaded", 30),
-            ("Elbow, 45° Threaded", 16),
-            ("Elbow, 90° (R/D ~3)", 14),
-            ("Elbow, 45° (R/D ~3)", 9.9),
-            ("Gate Valve", 8),
-            ("Globe Valve", 340),
-            ("Ball Valve", 3),
-            ("Butterfly Valve", 45),
-            ("Check Valve", 100),
-            ("Entrance / Exit", 1)
-        ]
-        total_le_fittings = sum(fitting_input(name, mult) for name, mult in fittings)
+            fittings = [
+                ("Tee, Flow thru run", 20),
+                ("Tee, Flow thru branch", 60),
+                ("Elbow, 90° Threaded", 30),
+                ("Elbow, 45° Threaded", 16),
+                ("Elbow, 90° (R/D ~3)", 14),
+                ("Elbow, 45° (R/D ~3)", 9.9),
+                ("Gate Valve", 8),
+                ("Globe Valve", 340),
+                ("Ball Valve", 3),
+                ("Butterfly Valve", 45),
+                ("Check Valve", 100),
+                ("Entrance / Exit", 1)
+            ]
+            total_le_fittings = sum(fitting_input(name, mult) for name, mult in fittings)
 
-        # Knockouts
-        st.markdown(f"**{label} Knockouts / Expansions**")
-        def knockout_le(diam):
-            if diam == 0:
-                return 0.0
-            if diam > ID_in:
-                return (1 / 12) * ID_in * ((1 - ((ID_in**2) / (diam**2))) ** 2)
-            else:
-                return (1 / 12) * ID_in * 0.5 * (1 - ((diam**2) / (ID_in**2)))
+            # Knockouts
+            st.markdown(f"**{label} Knockouts / Expansions**")
+            def knockout_le(diam):
+                if diam == 0:
+                    return 0.0
+                if diam > ID_in:
+                    return (1 / 12) * ID_in * ((1 - ((ID_in**2) / (diam**2))) ** 2)
+                else:
+                    return (1 / 12) * ID_in * 0.5 * (1 - ((diam**2) / (ID_in**2)))
 
-        knockout_le_total = 0
-        for i in range(3):
-            d = st.number_input(f"{label} Knockout {i+1} Diameter (in)", min_value=0.0, value=0.0, key=f"kdiam{i}_{label}")
-            knockout_le_total += knockout_le(d)
+            knockout_le_total = 0
+            for i in range(3):
+                d = st.number_input(f"{label} Knockout {i+1} Diameter (in)", min_value=0.0, value=0.0, key=f"kdiam{i}_{label}")
+                knockout_le_total += knockout_le(d)
 
-        # Specialty Valves
-        st.markdown(f"**{label} Specialty Valves / Components**")
-        def specialty_valve_le(cv):
-            if cv == 0:
-                return 0.0
-            numerator = 100 * 891 * (ID_in ** 5)
-            denominator = (12 * (1 + (3.6 / ID_in) + 0.03 * ID_in)) * (cv ** 2)
-            return numerator / denominator
+            # Specialty Valves
+            st.markdown(f"**{label} Specialty Valves / Components**")
+            def specialty_valve_le(cv):
+                if cv == 0:
+                    return 0.0
+                numerator = 100 * 891 * (ID_in ** 5)
+                denominator = (12 * (1 + (3.6 / ID_in) + 0.03 * ID_in)) * (cv ** 2)
+                return numerator / denominator
 
-        specialty_le_total = 0
-        for i in range(3):
-            cv = st.number_input(f"{label} Specialty Valve {i+1} Cv", min_value=0.0, value=0.0, key=f"cv{i}_{label}")
-            specialty_le_total += specialty_valve_le(cv)
+            specialty_le_total = 0
+            for i in range(3):
+                cv = st.number_input(f"{label} Specialty Valve {i+1} Cv", min_value=0.0, value=0.0, key=f"cv{i}_{label}")
+                specialty_le_total += specialty_valve_le(cv)
 
-        # Final Summary
-        st.markdown(f"**{label} Total Equivalent Length Summary**")
-        total_pipe = developed_length + total_le_fittings + knockout_le_total + specialty_le_total
+            # Final Summary
+            st.markdown(f"**{label} Total Equivalent Length Summary**")
+            total_pipe = developed_length + total_le_fittings + knockout_le_total + specialty_le_total
 
-        numerator = total_pipe * (1 + (3.6 / ID_in) + (0.03 * ID_in)) * (3.068 ** 5)
-        denominator = (ID_in ** 5) * (1 + (3.6 / 3.068) + (0.03 * 3.068))
-        total_pipe_nps = numerator / denominator
+            numerator = total_pipe * (1 + (3.6 / ID_in) + (0.03 * ID_in)) * (3.068 ** 5)
+            denominator = (ID_in ** 5) * (1 + (3.6 / 3.068) + (0.03 * 3.068))
+            total_pipe_nps = numerator / denominator
 
-        st.metric(f"{label} Total Length of Header (ft)", f"{total_pipe:.2f}")
-        st.metric(f"{label} Total Length (ft) of 3\" NPS", f"{total_pipe_nps:.2f}")
+            st.metric(f"{label} Total Length of Header (ft)", f"{total_pipe:.2f}")
+            st.metric(f"{label} Total Length (ft) of 3\" NPS", f"{total_pipe_nps:.2f}")
 
-        # Footer calculator
-        st.markdown("**Spitzglass & Friction Calculator**")
-        eD = 12 * 0.00015 / ID_in
-        turb_factor = 0.25 / (math.log10(eD / 3.7) ** 2)
-        spitz_factor = (1 + 3.6 / ID_in + 0.03 * ID_in) / 100
-        ratio = turb_factor / spitz_factor
+            # Footer calculator
+            st.markdown("**Spitzglass & Friction Calculator**")
+            eD = 12 * 0.00015 / ID_in
+            turb_factor = 0.25 / (math.log10(eD / 3.7) ** 2)
+            spitz_factor = (1 + 3.6 / ID_in + 0.03 * ID_in) / 100
+            ratio = turb_factor / spitz_factor
 
-        col1, col2 = st.columns(2)
-        with col1:
-            st.metric(f"{label} ε/D", f"{eD:.5f}")
-            st.metric(f"{label} Turb Friction Factor fr", f"{turb_factor:.4f}")
-        with col2:
-            st.metric(f"{label} Spitzglass ƒspzz", f"{spitz_factor:.5f}")
-            st.metric(f"{label} Ratio (fr / ƒspzz)", f"{ratio:.4f}")
+            col1, col2 = st.columns(2)
+            with col1:
+                st.metric(f"{label} ε/D", f"{eD:.5f}")
+                st.metric(f"{label} Turb Friction Factor fr", f"{turb_factor:.4f}")
+            with col2:
+                st.metric(f"{label} Spitzglass ƒspzz", f"{spitz_factor:.5f}")
+                st.metric(f"{label} Ratio (fr / ƒspzz)", f"{ratio:.4f}")
 
