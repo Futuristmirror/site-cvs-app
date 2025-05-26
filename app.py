@@ -260,7 +260,7 @@ with tab4:
             st.metric("Total Length (ft) of 3\" NPS", f"{total_nps_sum:.2f}")
         with c2:
             st.metric("Capacity (MMSCFD/SQRT(psi))", f"{capacity:.5f}" if capacity else "")
-            st.session_state["capacity_main_tank_vent"] = capacity
+            
 # ----------------------------- 
 # Tab 5: MAIN TANK VENT HEADER2
 # -----------------------------
@@ -369,7 +369,6 @@ with tab5:
             st.metric("Total Length (ft) of 3\" NPS", f"{total_nps_sum:.2f}")
         with c2:
             st.metric("Capacity (MMSCFD/SQRT(psi))", f"{capacity:.5f}" if capacity else "")
-            st.session_state["capacity_main_tank_vent_header2"] = capacity
 # ----------------------------- 
 # Tab 6: FlareVent
 # -----------------------------
@@ -643,13 +642,5 @@ with tab8:
     st.metric("Minimum Thief Hatch/PRV (osig)", f"{thief_prv_input:.2f}")
     st.metric("Design Pressure (osig)", f"{design_pressure:.2f}")
 
-st.subheader("Tank Vent Capacities")
 
-col1, col2, col3 = st.columns(3)
-with col1:
-    st.metric("Main Tank Vent Capacity", f"{capacity_main_tank_vent:.5f} MMSCFD/SQRT(psi)")
-with col2:
-    st.metric("Main Tank Vent Header2 Capacity", f"{capacity_main_tank_vent_header2:.5f} MMSCFD/SQRT(psi)")
-with col3:
-    st.metric("Total Tank Vent", f"{total_tank_vent_capacity:.5f} MMSCFD/SQRT(psi)")
 
