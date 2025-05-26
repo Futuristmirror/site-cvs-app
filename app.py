@@ -145,17 +145,16 @@ with tab3:
 with tab4:
     st.header("🌬 MAIN TANK VENT HEADER1 (3\" Only)")
 
-    st.markdown("This prototype models the 3\" header row using the original Excel formulas. Only total equivalent length is shown. Pipe property formulas are grouped below by ID.")
-
     st.subheader("Pipe Fittings – 3\"")
+    ID_in = 3.068  # G7 for all calculations
 
-    ID_in = 3.068  # Used for all Le calculations
+    developed_length = st.number_input("Developed Length (ft)", min_value=0.0, value=0.0, step=1.0)
 
     def fitting_input(label, multiplier):
         qty = st.number_input(f"{label} (qty)", min_value=0, value=0, step=1)
         return qty * (1 / 12) * ID_in * multiplier
 
-    fitting_data = [
+    fittings = [
         ("Tee, Flow thru run", 20),
         ("Tee, Flow thru branch", 60),
         ("Elbow, 90° Threaded", 30),
@@ -169,20 +168,58 @@ with tab4:
         ("Check Valve", 100),
         ("Entrance / Exit", 1)
     ]
+    total_le_fittings = sum(fitting_input(label, mult) for label, mult in fittings)
 
-    total_le = 0
-    for label, mult in fitting_data:
-        total_le += fitting_input(label, mult)
+    st.subheader("Knockouts / Expansions")
 
-    developed_length = st.number_input("Developed Length (ft)", min_value=0.0, value=0.0, step=1.0)
-    total_pipe = developed_length + total_le
+    def knockout_le(diam):
+        if diam == 0:
+            return 0.0
+        if diam > ID_in:
+            return (1 / 12) * ID_in * ((1 - ((ID_in**2) / (diam**2))) ** 2)
+        else:
+            return (1 / 12) * ID_in * 0.5 * (1 - ((diam**2) / (ID_in**2)))
 
-    st.subheader("Summary")
-    st.metric("Total Equivalent Fittings Le (ft)", f"{total_le:.2f}")
+    knockout_le_total = 0
+    for i in range(3):
+        col1, col2 = st.columns(2)
+        with col1:
+            d = st.number_input(f"Knockout {i+1} Diameter (in)", min_value=0.0, value=0.0, key=f"kdiam{i}")
+        with col2:
+            le = knockout_le(d)
+            st.metric(f"Le {i+1}", f"{le:.2f}")
+        knockout_le_total += le
+
+    st.subheader("Specialty Valves / Components")
+
+    def specialty_valve_le(cv):
+        if cv == 0:
+            return 0.0
+        numerator = 100 * 891 * (ID_in ** 5)
+        denominator = (12 * (1 + (3.6 / ID_in) + 0.03 * ID_in)) * (cv ** 2)
+        return numerator / denominator
+
+    specialty_le_total = 0
+    for i in range(3):
+        col1, col2 = st.columns(2)
+        with col1:
+            cv = st.number_input(f"Specialty Valve {i+1} Cv", min_value=0.0, value=0.0, key=f"cv{i}")
+        with col2:
+            le = specialty_valve_le(cv)
+            st.metric(f"Le {i+1}", f"{le:.2f}")
+        specialty_le_total += le
+
+    # Final summary
+    st.subheader("Total Equivalent Length Summary")
+    total_pipe = developed_length + total_le_fittings + knockout_le_total + specialty_le_total
+    st.metric("Total Equivalent Fittings Le (ft)", f"{total_le_fittings:.2f}")
+    st.metric("Total Knockouts/Expansions Le (ft)", f"{knockout_le_total:.2f}")
+    st.metric("Total Specialty Components Le (ft)", f"{specialty_le_total:.2f}")
     st.metric("Total Length of 3\" Header (ft)", f"{total_pipe:.2f}")
 
-    st.subheader("Pipe Property Calculator (by ID only)")
-
+    # Footer calculator
+    st.markdown("---")
+    st.subheader("Spitzglass & Friction Calculator (Based on Pipe ID Only)")
     id_input = st.number_input("Pipe ID (inches)", min_value=0.1, value=3.068, step=0.01)
     eD = 12 * 0.00015 / id_input
     turb_factor = 0.25 / (math.log10(eD / 3.7) ** 2)
