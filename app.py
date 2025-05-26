@@ -667,24 +667,42 @@ with tab9:
 
     diagram = f"""
     flowchart LR
-        %% Vapor lines first so they render on top
-        VA[Vapor from Inlet Seps]
-        VB[Vapor from HT]
-        VC[Vapor from VRTs]
-        VD[Vapor from Oil Tanks]
 
-        %% Main oil flow
-        A[Inlet Separators] --> B[Heater Treaters] --> C[VRTs] --> D[Oil Tanks]
+        %% Vapor nodes (top)
+        VA[To Sales/Flare]
+        VB[To Sales/Flare]
+        VC[To MP Flare]
+        VD[To LP Flare]
 
-        %% Water out bottom
+        %% Oil flow (default = black)
+        A[Inlet Separators] --> B[Heater Treaters]
+        B --> C[VRTs]
+        C --> D[Oil Tanks]
+
+        %% Water lines (styled blue)
         A --> W1[To Water Tanks]
         B --> W2[To Water Tanks]
 
-        %% Vapor connections as dashed lines upward
+        %% Vapor lines (styled red dashed)
         A -.-> VA
         B -.-> VB
         C -.-> VC
         D -.-> VD
+
+        %% Assign classes
+        class W1,W2 waterLine
+        class VA,VB,VC,VD vaporNode
+        class A,W1 waterLine
+        class B,W2 waterLine
+        class A,VA vaporLine
+        class B,VB vaporLine
+        class C,VC vaporLine
+        class D,VD vaporLine
+
+        %% Styling rules
+        classDef waterLine stroke:#1f77b4,stroke-width:2px;
+        classDef vaporLine stroke:#d62728,stroke-width:2px,stroke-dasharray: 5 5;
+        classDef vaporNode fill:#ffe6e6,color:#d62728,stroke:#d62728;
     """
 
     st_mermaid(diagram)
