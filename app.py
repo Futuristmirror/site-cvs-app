@@ -7,6 +7,17 @@ st.title("Closed Vent System Assessment Tool")
 
 # Setup Tabs
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["🛢 Tank Layout", "🌊 Main Process", "➕ Add to Main Process", "🌬 MAIN TANK VENT1", "🌬 MAIN TANK VENT2", "🌬 FlareVent"])
+with tab4:
+    st.header("🌬 MAIN TANK VENT1 (Full Range)")
+    # ... rest of content
+
+with tab5:
+    st.header("🌬 MAIN TANK VENT2 (Full Range)")
+    # ... rest of content
+
+with tab6:
+    st.header("🌬 FlareVent (Full Range)")
+    # ... rest of content
 
 
 # -----------------------------
@@ -143,7 +154,7 @@ with tab3:
 # -----------------------------
 # Tab 🌬 MAIN TANK VENT1: MAIN TANK VENT / FLARE VENT
 # -----------------------------
-with tab MAIN TANK VENT1:
+with tab4:
     st.header("🌬 MAIN TANK VENT1 (Full Range)")
 
     st.subheader("Summary")
@@ -251,7 +262,7 @@ with tab MAIN TANK VENT1:
 # -----------------------------
 # Tab 🌬 MAIN TANK VENT2: MAIN TANK VENT / FLARE VENT
 # -----------------------------
-with tab MAIN TANK VENT2:
+with tab5:
     st.header("🌬 MAIN TANK VENT2 (Full Range)")
 
     st.subheader("Summary")
@@ -359,7 +370,7 @@ with tab MAIN TANK VENT2:
 # -----------------------------
 # Tab 🌬 FlareVent: MAIN TANK VENT / FLARE VENT
 # -----------------------------
-with tab FlareVent:
+with tab6:
     st.header("🌬 FlareVent (Full Range)")
 
     st.subheader("Summary")
