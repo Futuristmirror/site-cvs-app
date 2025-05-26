@@ -653,42 +653,37 @@ with tab8:
 # -----------------------------
 # Tab 9: Process Flow Diagram
 # -----------------------------
+# -----------------------------
+# Tab 9: Process Flow Diagram
+# -----------------------------
 from streamlit_mermaid import st_mermaid
 
 with tab9:
     st.header("📈 Oil System Flow – Process Flow Diagram")
 
+    # Oil system inputs
     inlet_seps = st.number_input("Number of Inlet Separators", min_value=0, value=2)
     ht = st.number_input("Number of Heater Treaters (HT)", min_value=0, value=1)
     vrt = st.number_input("Number of VRTs", min_value=0, value=1)
 
     st.markdown("### 🛢️ Oil & Water Flow Path")
 
-    diagram = """
-    flowchart TB
+    diagram = f"""
+    flowchart LR
+        A[Inlet Separators] --> B[Heater Treaters] --> C[VRTs] --> D[Oil Tanks]
 
-        %% Vapor lines (at top visually)
-        V1(Vapor from Inlet Seps)
-        V2(Vapor from HT)
-        V3(Vapor from VRTs)
-        V4(Vapor from Oil Tanks)
+        %% Water out bottom of A and B
+        A --> W1[To Water Tanks]
+        B --> W2[To Water Tanks]
 
-        %% Main process flow
-        A[Inlet Separators] --> B[Heater Treaters]
-        B --> C[VRTs]
-        C --> D[Oil Tanks]
-
-        %% Water paths (bottom)
-        A --> W1[Water from Inlet Seps to Water Tanks]
-        B --> W2[Water from HT to Water Tanks]
-
-        %% Vapor connections
-        A --> V1
-        B --> V2
-        C --> V3
-        D --> V4
+        %% Vapor lines out top
+        A -.-> VA[Vapor from Inlet Seps]
+        B -.-> VB[Vapor from HT]
+        C -.-> VC[Vapor from VRTs]
+        D -.-> VD[Vapor from Oil Tanks]
     """
 
     st_mermaid(diagram)
+
 
 
