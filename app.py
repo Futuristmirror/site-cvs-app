@@ -655,15 +655,24 @@ with tab8:
 # Tab 9: Process Flow Diagram
 # -----------------------------
 with tab9:
-    st.header("📈 Process Flow Diagram")
+    st.header("📈 Oil System Flow – Process Flow Diagram")
 
-    st_mermaid("""
+    # User Inputs
+    inlet_seps = st.number_input("Number of Inlet Separators", min_value=0, value=2, step=1)
+    ht = st.number_input("Number of Heater Treaters (HT)", min_value=0, value=1, step=1)
+    vrt = st.number_input("Number of VRTs", min_value=0, value=1, step=1)
+
+    # Diagram Text
+    diagram = f"""
     graph LR
-        T1[Oil Tanks: 500 bbl x 4] --> S[Separator]
-        T2[Water Tanks: 500 bbl x 3] --> S
-        S --> V[Vent Header]
-        V --> F[Flare]
-    """)
+        A[Inlet Separators ({inlet_seps})] --> B[Heater Treaters ({ht})]
+        B --> C[VRTs ({vrt})]
+        C --> D[Oil Tanks]
+    """
+
+    st.markdown("### 🛢️ Oil Flow Path")
+    st_mermaid(diagram)
+
 
 
 
