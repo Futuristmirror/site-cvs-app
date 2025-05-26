@@ -6,7 +6,8 @@ st.set_page_config(page_title="Closed Vent System Calculator", layout="wide")
 st.title("Closed Vent System Assessment Tool")
 
 # Setup Tabs
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["🛢 Tank Layout", "🌊 Main Process", "➕ Add to Main Process", "🌬 MAIN TANK VENT 1", "🌬 MAIN TANK VENT 2", "🔥 FLARE VENT"])
+tab1, tab2, tab3, tab4 = st.tabs(["🛢 Tank Layout", "🌊 Main Process", "➕ Add to Main Process", "🌬 MAIN TANK VENT"])
+
 
 # -----------------------------
 # Tab 1: Tank Layout
@@ -141,12 +142,17 @@ with tab3:
    # -----------------------------
 # Tab 4: MAIN TANK VENT
 # -----------------------------
+with tab4:
+    st.header('🌬 MAIN TANK VENT HEADER1 (Full Range)')
 
-# Shared logic block (used in all three vent tabs)
-def render_vent_tab(label_prefix):
+    # --------- Summary Box ---------
+    st.subheader("Summary")
     summary_lengths = []
+    total_nps_sum = 0
+    capacity = ""
 
-    col_sets = st.columns(8)
+    summary_placeholder = st.empty()
+
     id_configs = [
         {"label": '1.5"', "id_in": 1.338},
         {"label": '2"', "id_in": 2.067},
@@ -158,21 +164,20 @@ def render_vent_tab(label_prefix):
         {"label": '12"', "id_in": 11.938},
     ]
 
-    developed_lengths = {}
-    total_pipes = {}
+    col_sets = st.columns(len(id_configs))
 
     for config, col in zip(id_configs, col_sets):
         with col:
             label = config["label"]
             ID_in = config["id_in"]
 
-            st.markdown(f"### {label_prefix} {label} Pipe")
+            st.markdown(f"### {label} Pipe")
             st.markdown("<div style='background-color:#f0f0f0; padding: 4px; border-radius: 6px'><b>Developed Length</b></div>", unsafe_allow_html=True)
-            developed_length = st.number_input(f"{label_prefix} {label} Developed Length (ft)", min_value=0.0, value=0.0, step=1.0, key=f"dev_{label_prefix}_{label}")
+            developed_length = st.number_input(f"{label} Developed Length (ft)", min_value=0.0, value=0.0, step=1.0, key=f"dev_{label}")
 
             st.markdown("---")
             def fitting_input(tag, multiplier):
-                qty = st.number_input(f"{label_prefix} {label} {tag} (qty)", min_value=0, value=0, step=1, key=f"{tag}_{label_prefix}_{label}")
+                qty = st.number_input(f"{label} {tag} (qty)", min_value=0, value=0, step=1, key=f"{tag}_{label}")
                 return qty * (1 / 12) * ID_in * multiplier
 
             fittings = [
@@ -192,7 +197,7 @@ def render_vent_tab(label_prefix):
             total_le_fittings = sum(fitting_input(name, mult) for name, mult in fittings)
 
             st.markdown("<hr style='margin-top: 20px; margin-bottom: 6px'>", unsafe_allow_html=True)
-            st.markdown(f"**{label_prefix} {label} Knockouts / Expansions**")
+            st.markdown(f"**{label} Knockouts / Expansions**")
             def knockout_le(diam):
                 if diam == 0:
                     return 0.0
@@ -203,11 +208,11 @@ def render_vent_tab(label_prefix):
 
             knockout_le_total = 0
             for i in range(3):
-                d = st.number_input(f"{label_prefix} {label} Knockout {i+1} Diameter (in)", min_value=0.0, value=0.0, key=f"kdiam{i}_{label_prefix}_{label}")
+                d = st.number_input(f"{label} Knockout {i+1} Diameter (in)", min_value=0.0, value=0.0, key=f"kdiam{i}_{label}")
                 knockout_le_total += knockout_le(d)
 
             st.markdown("<hr style='margin-top: 20px; margin-bottom: 6px'>", unsafe_allow_html=True)
-            st.markdown(f"**{label_prefix} {label} Specialty Valves / Components**")
+            st.markdown(f"**{label} Specialty Valves / Components**")
             def specialty_valve_le(cv):
                 if cv == 0:
                     return 0.0
@@ -217,7 +222,7 @@ def render_vent_tab(label_prefix):
 
             specialty_le_total = 0
             for i in range(3):
-                cv = st.number_input(f"{label_prefix} {label} Specialty Valve {i+1} Cv", min_value=0.0, value=0.0, key=f"cv{i}_{label_prefix}_{label}")
+                cv = st.number_input(f"{label} Specialty Valve {i+1} Cv", min_value=0.0, value=0.0, key=f"cv{i}_{label}")
                 specialty_le_total += specialty_valve_le(cv)
 
             total_pipe = developed_length + total_le_fittings + knockout_le_total + specialty_le_total
@@ -228,8 +233,8 @@ def render_vent_tab(label_prefix):
 
             summary_lengths.append(total_pipe_nps if total_pipe_nps > 0 else 0.0)
 
-            st.metric(f"{label_prefix} {label} Total Header Length (ft)", f"{total_pipe:.2f}")
-            st.metric(f"{label_prefix} {label} Total Length (ft) of 3\" NPS", f"{total_pipe_nps:.2f}")
+            st.metric(f"{label} Total Header Length (ft)", f"{total_pipe:.2f}")
+            st.metric(f"{label} Total Length (ft) of 3\" NPS", f"{total_pipe_nps:.2f}")
 
     total_nps_sum = sum(summary_lengths)
     if total_nps_sum == 0:
@@ -237,20 +242,10 @@ def render_vent_tab(label_prefix):
     else:
         capacity = math.sqrt((0.22437 * (3.068 ** 5)) / (total_nps_sum * (1 + (3.6 / 3.068) + (0.03 * 3.068))))
 
-    st.markdown("---")
-    st.subheader("Overall System Summary")
-    c1, c2 = st.columns(2)
-    with c1:
-        st.metric("Total Length (ft) of 3\" NPS", f"{total_nps_sum:.2f}")
-    with c2:
-        st.metric("Capacity (MMSCFD/SQRT(psi))", f"{capacity:.5f}" if capacity else "")
+    with summary_placeholder.container():
+        c1, c2 = st.columns(2)
+        with c1:
+            st.metric("Total Length (ft) of 3\" NPS", f"{total_nps_sum:.2f}")
+        with c2:
+            st.metric("Capacity (MMSCFD/SQRT(psi))", f"{capacity:.5f}" if capacity else "")
 
-# Call render function in each new tab
-with tab4:
-    render_vent_tab("MAIN TANK VENT 1")
-
-with tab5:
-    render_vent_tab("MAIN TANK VENT 2")
-
-with tab6:
-    render_vent_tab("FLARE VENT")
