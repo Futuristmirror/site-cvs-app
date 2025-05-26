@@ -143,20 +143,27 @@ with tab3:
 # Tab 4: MAIN TANK VENT
 # -----------------------------
 with tab4:
-    st.header('🌬 MAIN TANK VENT HEADER1 (3" and 4")')
+    st.header('🌬 MAIN TANK VENT HEADER1 (Full Range)')
 
-    col_3, col_4 = st.columns(2)
-
-    for config, col in zip([
+    id_configs = [
+        {"label": '1.5"', "id_in": 1.338},
+        {"label": '2"', "id_in": 2.067},
         {"label": '3"', "id_in": 3.068},
-        {"label": '4"', "id_in": 4.026}
-    ], [col_3, col_4]):
+        {"label": '4"', "id_in": 4.026},
+        {"label": '6"', "id_in": 6.070},
+        {"label": '8"', "id_in": 7.981},
+        {"label": '10"', "id_in": 10.020},
+        {"label": '12"', "id_in": 11.938},
+    ]
 
+    col_sets = st.columns(len(id_configs))
+
+    for config, col in zip(id_configs, col_sets):
         with col:
             label = config["label"]
             ID_in = config["id_in"]
 
-            st.subheader(f"{label} Pipe Fittings")
+            st.subheader(f"{label} Pipe")
             developed_length = st.number_input(f"{label} Developed Length (ft)", min_value=0.0, value=0.0, step=1.0, key=f"dev_{label}")
 
             def fitting_input(tag, multiplier):
@@ -180,7 +187,7 @@ with tab4:
             total_le_fittings = sum(fitting_input(name, mult) for name, mult in fittings)
 
             # Knockouts
-            st.markdown(f"**{label} Knockouts / Expansions**")
+            st.markdown(f"**{label} Knockouts**")
             def knockout_le(diam):
                 if diam == 0:
                     return 0.0
@@ -195,7 +202,7 @@ with tab4:
                 knockout_le_total += knockout_le(d)
 
             # Specialty Valves
-            st.markdown(f"**{label} Specialty Valves / Components**")
+            st.markdown(f"**{label} Specialty Valves**")
             def specialty_valve_le(cv):
                 if cv == 0:
                     return 0.0
@@ -209,28 +216,27 @@ with tab4:
                 specialty_le_total += specialty_valve_le(cv)
 
             # Final Summary
-            st.markdown(f"**{label} Total Equivalent Length Summary**")
             total_pipe = developed_length + total_le_fittings + knockout_le_total + specialty_le_total
 
             numerator = total_pipe * (1 + (3.6 / ID_in) + (0.03 * ID_in)) * (3.068 ** 5)
             denominator = (ID_in ** 5) * (1 + (3.6 / 3.068) + (0.03 * 3.068))
             total_pipe_nps = numerator / denominator
 
-            st.metric(f"{label} Total Length of Header (ft)", f"{total_pipe:.2f}")
+            st.metric(f"{label} Total Header Length (ft)", f"{total_pipe:.2f}")
             st.metric(f"{label} Total Length (ft) of 3\" NPS", f"{total_pipe_nps:.2f}")
 
-            # Footer calculator
-            st.markdown("**Spitzglass & Friction Calculator**")
+            # Footer Calculator
+            st.markdown("**Spitzglass Friction (Based on ID Only)**")
             eD = 12 * 0.00015 / ID_in
             turb_factor = 0.25 / (math.log10(eD / 3.7) ** 2)
             spitz_factor = (1 + 3.6 / ID_in + 0.03 * ID_in) / 100
             ratio = turb_factor / spitz_factor
 
-            col1, col2 = st.columns(2)
-            with col1:
+            c1, c2 = st.columns(2)
+            with c1:
                 st.metric(f"{label} ε/D", f"{eD:.5f}")
                 st.metric(f"{label} Turb Friction Factor fr", f"{turb_factor:.4f}")
-            with col2:
+            with c2:
                 st.metric(f"{label} Spitzglass ƒspzz", f"{spitz_factor:.5f}")
                 st.metric(f"{label} Ratio (fr / ƒspzz)", f"{ratio:.4f}")
 
