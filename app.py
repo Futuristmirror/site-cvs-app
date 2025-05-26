@@ -717,6 +717,3 @@ with tab9:
         classDef vaporNode fill:#ffe6e6,color:#d62728,stroke:#d62728;
     """
         st_mermaid(diagram)
-    
-
-    st_mermaid(diagram)
