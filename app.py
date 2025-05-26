@@ -607,25 +607,24 @@ tab8 = st.tabs(["📊 SUMMARY OF RESULTS"])[0]
 with tab8:
     st.header("📊 SUMMARY OF RESULTS")
 
-    # Dummy variables (replace with actual session state or shared values later)
-    oil_ppivfr = 0.01234
-    water_ppivfr = 0.01147
-    other_ppivfr = st.number_input("Other PPIVFR (mmscfd, SG=1)", min_value=0.0, value=0.00500, step=0.001)
+    # Pull stored values or fallback to default if missing
+    oil_ppivfr = st.session_state.get("oil_ppivfr", 0.0)
+    water_ppivfr = st.session_state.get("water_ppivfr", 0.0)
+    other_ppivfr = st.session_state.get("other_ppivfr", 0.0)
+    total_thermal_ppivfr = st.session_state.get("total_thermal_ppivfr", 0.0)
+    thief_prv_input = st.session_state.get("thief_prv_input", 0.0)
+    leaking_safety = st.session_state.get("leaking_safety", 0.0)
+    design_pressure = (thief_prv_input - leaking_safety) * 0.9 if thief_prv_input > leaking_safety else 0.0
+
     total_ppivfr = oil_ppivfr + water_ppivfr + other_ppivfr
 
-    total_thermal_ppivfr = 0.03560  # replace with actual value
-    thief_prv_input = 8.0           # replace with actual input
-    leaking_safety = 2.0            # replace with actual input
-    design_pressure = (thief_prv_input - leaking_safety) * 0.9
+    st.subheader("PPIVFR Summary")
+    st.metric("Oil PPIVFR (mmscfd, SG=1)", f"{oil_ppivfr:.5f}")
+    st.metric("Water PPIVFR (mmscfd, SG=1)", f"{water_ppivfr:.5f}")
+    st.metric("Other PPIVFR (mmscfd, SG=1)", f"{other_ppivfr:.5f}")
+    st.metric("Total PPIVFR (mmscfd, SG=1)", f"{total_ppivfr:.5f}")
 
-    st.subheader("PPIVFR Breakdown (mmscfd, SG=1)")
-    st.metric("Oil PPIVFR", f"{oil_ppivfr:.5f}")
-    st.metric("Water PPIVFR", f"{water_ppivfr:.5f}")
-    st.metric("Other PPIVFR", f"{other_ppivfr:.5f}")
-    st.metric("Total PPIVFR", f"{total_ppivfr:.5f}")
-
-    st.markdown("---")
-    st.subheader("System Pressure Information")
-    st.metric("Total Thermal PPIVFR", f"{total_thermal_ppivfr:.5f} mmscfd")
-    st.metric("Minimum Thief Hatch/PRV", f"{thief_prv_input:.2f} osig")
-    st.metric("Design Pressure", f"{design_pressure:.2f} osig")
+    st.subheader("Thermal & Pressure Details")
+    st.metric("Total Thermal PPIVFR (mmscfd)", f"{total_thermal_ppivfr:.5f}")
+    st.metric("Minimum Thief Hatch/PRV (osig)", f"{thief_prv_input:.2f}")
+    st.metric("Design Pressure (osig)", f"{design_pressure:.2f}")
