@@ -666,20 +666,23 @@ with tab9:
 
     st.markdown("### 🛢️ Oil & Water Flow Path")
 
-diagram = f"""
-flowchart LR
-    A[Inlet Separators] --> B[Heater Treaters] --> C[VRTs] --> D[Oil Tanks]
+    diagram = f"""
+    flowchart LR
+        A[Inlet Separators] --> B[Heater Treaters] --> C[VRTs] --> D[Oil Tanks]
 
-    A --> A1
-    B --> B1
-    C --> C1
+        A --> A1
+        B --> B1
+        C --> C1
 
-    A1 -.-> WMerge
-    B1 -.-> WMerge
-    C1 -.-> WMerge
+        A1 -.-> WMerge
+        B1 -.-> WMerge
+        C1 -.-> WMerge
 
-    WMerge -.-> W[Water Tanks]
-"""
+        WMerge -.-> W[Water Tanks]
+    """
+
+    st_mermaid(diagram)
+
 
 
 
