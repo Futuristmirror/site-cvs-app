@@ -681,48 +681,44 @@ with tab9:
 
     st.markdown("PFD")
 
-diagram = f"""
-flowchart TB
-    %% Main Process Nodes
-    A[Inlet Separators]
-    B[Heater Treaters]
-    C[VRTs]
-    D[Oil Tanks]
+    diagram = f"""
+    flowchart LR
 
-    %% Destination Nodes
-    W1[To Water Tanks]
-    W2[To Water Tanks]
-    VA[To Sales/Flare]
-    VB[To Sales/Flare]
-    VC[To MP Flare]
-    VD[To LP Flare]
+        %% Vapor nodes (top)
+        VA[To Sales/Flare]
+        VB[To Sales/Flare]
+        VC[To MP Flare]
+        VD[To LP Flare]
 
-    %% Connections
-    A --> B
-    B --> C
-    C --> D
+        %% Oil flow (default = black)
+        A[Inlet Separators] --> B[Heater Treaters]
+        B --> C[VRTs]
+        C --> D[Oil Tanks]
 
-    A --> W1
-    B --> W2
+        %% Water lines (styled blue)
+        A --> W1[To Water Tanks]
+        B --> W2[To Water Tanks]
 
-    A -.-> VA
-    B -.-> VB
-    C -.-> VC
-    D -.-> VD
+        %% Vapor lines (styled red dashed)
+        A -.-> VA
+        B -.-> VB
+        C -.-> VC
+        D -.-> VD
 
-    %% Class Definitions
-    classDef vaporNode fill=#ffe6e6,stroke=#d62728,color=#d62728,stroke-dasharray: 5 5;
-    classDef waterNode fill=#e6f2ff,stroke=#1f77b4,color=#1f77b4;
-    classDef solidBlackBox stroke:#000000,color:#000000,stroke-width:2px,fill=white;
+        %% Assign classes
+        class W1,W2 waterLine
+        class VA,VB,VC,VD vaporNode
+        class A,W1 waterLine
+        class B,W2 waterLine
+        class A,VA vaporLine
+        class B,VB vaporLine
+        class C,VC vaporLine
+        class D,VD vaporLine
 
-    %% Assign Classes
-    class W1,W2 waterNode;
-    class VA,VB,VC,VD vaporNode;
-    class A,B,C,D solidBlackBox;
-"""
-st_mermaid(diagram)
+        %% Styling rules
+        classDef waterLine stroke:#1f77b4,stroke-width:2px;
+        classDef vaporLine stroke:#d62728,stroke-width:2px,stroke-dasharray: 5 5;
+        classDef vaporNode fill:#ffe6e6,color:#d62728,stroke:#d62728;
+    """
 
-
-
-
-
+    st_mermaid(diagram)
