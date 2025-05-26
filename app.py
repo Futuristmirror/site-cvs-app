@@ -476,13 +476,11 @@ with tab7:
     # 🔹 Placeholder and setup
     summary_placeholder = st.empty()
     summary_lengths = []
-
-    # You will accumulate pipe lengths below and update this value
-    total_nps_sum = 0  # This will be summed from the pipes
+    total_nps_sum = 0
 
     # 🔹 Control Device Inputs (Green)
     control_device_model = st.text_input("Control Device Make/Model", value="Steffes SVG-3B4", key="cd_model")
-    user_capacity_input = st.number_input("MMSCFD/SQRT(psig), SG=1", min_value=0.0, value=0.299, key="cd_capacity")
+    user_capacity_input = st.number_input("Flare Capacity MMSCFD/SQRT(psig), SG=1", min_value=0.0, value=0.299, format="%.3f", key="cd_capacity")
     turn_on_oz = st.number_input("Turn ON (oz)", min_value=0.0, value=0.0, key="cd_turn_on")
     turn_off_oz = st.number_input("Turn OFF (oz)", min_value=0.0, value=0.0, key="cd_turn_off")
 
@@ -492,8 +490,7 @@ with tab7:
     else:
         le_ft = 0.0
 
-    # This will be finalized after pipe inputs below
-    wfittings_ft = 0.0
+    wfittings_ft = 0.0  # Will be updated after pipe inputs
     red_capacity = 0.0
 
     # Pipe Inputs Section
@@ -580,7 +577,7 @@ with tab7:
             st.metric(f"{label} Total Header Length (ft)", f"{total_pipe:.2f}")
             st.metric(f"{label} Total Length (ft) of 3\" NPS", f"{total_pipe_nps:.2f}")
 
-    # Final calc and display
+    # Final summary calculations
     total_nps_sum = sum(summary_lengths)
     wfittings_ft = le_ft + total_nps_sum
 
@@ -593,12 +590,11 @@ with tab7:
         st.markdown("### 🔵 Control Device Output")
         c1, c2, c3 = st.columns(3)
         with c1:
-            st.metric("Total Length (ft) of 3\" NPS", f"{total_nps_sum:.2f}")
-            st.metric("Le, ft (3\" pipe)", f"{le_ft:.2f}")
+            st.metric("Total Length (ft) of 3\" NPS of Flare Vent", f"{total_nps_sum:.2f}")
+            st.metric("Le, ft (3\" pipe) of Flare/Comb", f"{le_ft:.2f}")
         with c2:
             st.metric("wfittings, ft 3\" pipe", f"{wfittings_ft:.2f}")
             st.metric("Turn ON (oz)", f"{turn_on_oz:.1f}")
         with c3:
-            st.metric("Red. Capacity", f"{red_capacity:.5f}")
+            st.metric("Red. Capacity MMSCFD/SQRT(psig), SG=1", f"{red_capacity:.5f}")
             st.metric("Turn OFF (oz)", f"{turn_off_oz:.1f}")
-
