@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import math
+from streamlit_mermaid import st_mermaid
 
 st.set_page_config(page_title="Closed Vent System Calculator", layout="wide")
 st.title("Closed Vent System Assessment Tool")
