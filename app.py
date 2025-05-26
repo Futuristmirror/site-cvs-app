@@ -658,12 +658,28 @@ from streamlit_mermaid import st_mermaid
 with tab9:
     st.header("📈 Oil System Flow – Process Flow Diagram")
 
-    # Oil system inputs
-    inlet_seps = st.number_input("Number of Inlet Separators", min_value=0, value=2)
-    ht = st.number_input("Number of Heater Treaters (HT)", min_value=0, value=1)
-    vrt = st.number_input("Number of VRTs", min_value=0, value=1)
+    # ----- Row 1: Inlet Seps -----
+    r1c1, r1c2 = st.columns(2)
+    with r1c1:
+        inlet_seps = st.number_input("Number of Inlet Separators", min_value=0, value=2)
+    with r1c2:
+        inlet_sep_psig = st.number_input("Max Operating Pressure of Inlet Seps (psig)", min_value=0.0, value=25.0)
 
-    st.markdown("### 🛢️ Oil & Water Flow Path")
+    # ----- Row 2: Heater Treaters -----
+    r2c1, r2c2 = st.columns(2)
+    with r2c1:
+        ht = st.number_input("Number of Heater Treaters (HT)", min_value=0, value=1)
+    with r2c2:
+        ht_psig = st.number_input("Max Operating Pressure of HTs (psig)", min_value=0.0, value=50.0)
+
+    # ----- Row 3: VRTs -----
+    r3c1, r3c2 = st.columns(2)
+    with r3c1:
+        vrt = st.number_input("Number of VRTs", min_value=0, value=1)
+    with r3c2:
+        vrt_psig = st.number_input("Max Operating Pressure of VRTs (psig)", min_value=0.0, value=10.0)
+
+    st.markdown("PFD")
 
     diagram = f"""
     flowchart LR
