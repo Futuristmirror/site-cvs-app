@@ -159,7 +159,7 @@ with tab3:
         am_src_drw_tk = st.checkbox("Check box if source is drawing from tank",0)
         
     am_working = 4 # SCF/BBL   
-    if am_src_drw_tk = 1:
+    if am_src_drw_tk == 1:
         am_flash = am_bp_pres * 1.5
     else:
         am_flash = am_bp_pres * 0
