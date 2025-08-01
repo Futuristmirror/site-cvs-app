@@ -152,7 +152,7 @@ with tab3:
     with col1:
         am_liq_flow = st.number_input("Liquid Flowrate (GPM)", min_value=0.0, value=0.00500, step=0.001)
         
-    with col2
+    with col2:
         am_bp_pres = st.number_input("Liquid Bubble Point Pressure (PSIG)", min_value=0.0, value=0.00500, step=0.001)
 
     am_flash = am_bp_pres * 1.5
