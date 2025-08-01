@@ -148,13 +148,13 @@ with tab2:
 # -----------------------------
 with tab3:
     st.header("➕ Add to Main Process")
-    other_ppivfr = st.number_input("Other PPIVFR (mmscfd, SG=1)", min_value=0.0, value=0.00500, step=0.001)
-    st.metric("Other PPIVFR (mmscfd, SG=1)", f"{other_ppivfr:.5f}")
-    st.session_state["other_ppivfr"] = other_ppivfr
+    am_liq_flow = st.number_input("Liquid Flowrate (GPM)", min_value=0.0, value=0.00500, step=0.001)
+    am_bp_pres = st.number_input("Liquid Bubble Point Pressure (PSIG)", min_value=0.0, value=0.00500, step=0.001)
+    am_flash = am_bp_pres * 1.5
+    other_ppivfr = am_flash * am_liq_flow
     st.markdown("This section will allow you to define additional process sources that contribute to total PPIVFR (e.g., LACT, Recirc, Vapor Return).")
-
     st.info("🛠 Hello world")
-
+    st.session_state["other_ppivfr"] = other_ppivfr
    # -----------------------------
 # Tab 4: MAIN TANK VENT
 # -----------------------------
