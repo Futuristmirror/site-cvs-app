@@ -155,7 +155,15 @@ with tab3:
     with col2:
         am_bp_pres = st.number_input("Liquid Bubble Point Pressure (PSIG)", min_value=0.0, value=0.00500, step=0.001)
 
-    am_flash = am_bp_pres * 1.5
+    with col3:
+        am_src_drw_tk = st.checkbox("Check box if source is drawing from tank",0)
+        
+    am_working = 4 # SCF/BBL   
+    if am_src_drw_tk = 1:
+        am_flash = am_bp_pres * 1.5
+    else:
+        am_flash = am_bp_pres * 0
+    
     other_ppivfr = am_flash * am_liq_flow
     st.markdown("This section will allow you to define additional process sources that contribute to total PPIVFR (e.g., LACT, Recirc, Vapor Return).")
     st.info("🛠 Hello world")
